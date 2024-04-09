@@ -18,6 +18,7 @@ const auth = getAuth(app);
 LogBox.ignoreLogs([
   "fff",
   "ddd"
+  
 ])
 
 const Stack = createStackNavigator()
