@@ -3,5 +3,5 @@ import { View, Text } from 'react-native'
 export default function Photo() {
 return (
 <View>
-<Text>photoe</Text>
+<Text>photos</Text>
 </View>)}

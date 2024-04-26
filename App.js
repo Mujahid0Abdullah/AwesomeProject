@@ -13,6 +13,7 @@ import ContextWrapper from './context/ContextWrapper.js';
 import Profile from "./screens/Profile.js"
 import Chats from "./screens/Chats.js"
 import Photo from "./screens/Photo.js"
+import Contacts from './screens/Contacts.js';
 const auth = getAuth(app);
 
 LogBox.ignoreLogs([
@@ -56,7 +57,7 @@ function App() {
         </Stack.Navigator>
       ):( 
      <Stack.Navigator screenOptions={{ headerStyle:{
-      backgroundColor: "#dddddd",
+      backgroundColor: "#128c7e",
       shadowOpacity:0,
       elevation:0
      },
@@ -68,10 +69,14 @@ function App() {
       )}
      
 
-      <Stack.Screen 
+      <Stack.Screen style={{backgroundColor:"#445354"}}
       name='home' 
-      options={{title:"Home"}} 
+      options={{title:"Doktorlarım"}} 
       component={Home}/>
+         <Stack.Screen 
+      name='contacts' style={{backgroundColor:"#445354"}}
+      options={{title:"Doktor Seç"}} 
+      component={Contacts}/>
      </Stack.Navigator> 
      )}
      
