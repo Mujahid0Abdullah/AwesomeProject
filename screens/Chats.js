@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { QuerySnapshot, collection, doc, onSnapshot, query, where } from 'firebase/firestore'
 import { View, Text } from 'react-native'
 import { db,auth } from '../firebase'
+import ContactsFloatingIcon from '../components/ContactsFloatingIcon'
 import GlobalContext from '../context/Context'
 export default function Chats() {
     const {currentUser} = auth
@@ -21,14 +22,16 @@ useEffect(()=> {
         id: doc.id,
     userB: 
     doc.data().participants.find(
-        (p)=>p.email !== currentUser.email
-     ),}))
+        (p)=>p.email !== currentUser.email ),
+    }))
     setRooms(parsedChats)
 });
 return ()=> unsubscribe();
 },[])
 return (
-<View>
+<View style={{flex:1, padding: 5, paddingRight:10}}>
 
 <Text>chatpage</Text>
+<ContactsFloatingIcon/>
+
 </View>)}
