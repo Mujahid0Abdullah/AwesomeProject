@@ -20,7 +20,7 @@ export default function SignIn (){
       ,flex:1
         ,color:"blue" ,backgroundColor:colors.white,
          textAlign : "center", fontFamily:"Roboto"}}>
-        <Text style={{color:colors.foreground,fontSize:24, marginBottom:20}}>Merhaba, Buradan Kayıt yapabilirsin... </Text>
+        <Text style={{color:colors.foreground,fontSize:24, marginBottom:20}}>Merhaba, Buradan Kayıt yapabilirsiniz... </Text>
       <Image source={require("../assets/kayıtol.jpg")} style={{width:180 , height:180}} resizeMode='cover'></Image>
       <View style={styles.view}>
         <TextInput style={styles.container} 

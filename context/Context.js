@@ -3,7 +3,9 @@ import React from "react";
 const GlobalContext = React.createContext({
 theme,
 rooms:[],
-setRooms: () =>{}
+setRooms: () =>{},
+unfilteredRooms: [],
+setUnfilteredRooms: () => {}
 });
 
 export default GlobalContext; 
