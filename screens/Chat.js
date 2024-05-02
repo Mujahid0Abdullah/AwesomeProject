@@ -144,6 +144,11 @@ export default function Chat() {
     ]);
   }
 
+  const generateMessageId = () => {
+    // Burada bir benzersiz mesaj kimliği oluşturun, örneğin rastgele bir dize veya zaman damgası kullanabilirsiniz
+    return Math.random().toString(36).substr(2, 9); // Örnek bir rastgele dize oluşturma
+  };
+
   async function handlePhotoPicker() {
     const result = await pickImage();
     if (!result.cancelled) {
@@ -198,7 +203,7 @@ export default function Chat() {
                     {
                       text: text.trim(),
                       user,
-                      _id: messageIdGenerator(),
+                      _id: generateMessageId(),
                     },
                     true
                   );
