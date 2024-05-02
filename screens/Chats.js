@@ -15,16 +15,15 @@ const chatsQuery = query(
 useEffect(()=> {
     const unsubscribe = onSnapshot(
         chatsQuery,(QuerySnapshot)=>{
-        const parsedChats= QuerySnapshot.docs.filter(
-            doc => doc.data().lastMessage).map(
-                (doc)=>({
-                ...doc.data(), 
-        id: doc.id,
-    userB: 
-    doc.data().participants.find(
-        (p)=>p.email !== currentUser.email ),
-    }))
-    setRooms(parsedChats)
+            const parsedChats = querySnapshot.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id,
+              userB: doc
+                .data()
+                .participants.find((p) => p.email !== currentUser.email),
+            }));
+    setUnfilteredRooms(parsedChats);
+    setRooms(parsedChats.filter((doc) => doc.lastMessage));
 });
 return ()=> unsubscribe();
 },[])
