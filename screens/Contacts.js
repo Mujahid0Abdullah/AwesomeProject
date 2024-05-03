@@ -25,14 +25,16 @@ export default function Contacts() {
 }
 
 function ContactPreview({contact,image}){
-    const {room ,rooms}=  useContext(GlobalContext)
+    const {unfilteredRooms, rooms}=  useContext(GlobalContext)
 
     const [user,setUser]= useState(contact)
     useEffect(()=>{
         const q= query(
-            collection(db,"users",where("email","==",contact.email))
+            collection(db,"users"),
+            where("email","==",contact.email)
         )
-        const unsubscribe = onSnapshot(q,snapshot=> {
+        
+        const unsubscribe = onSnapshot(q,(snapshot)=> {
             if(snapshot.docs.length){
                 const userDoc = snapshot.docs[0].data()
                 setUser((prevUser)=> ({...prevUser,userDoc}))
@@ -46,7 +48,7 @@ function ContactPreview({contact,image}){
         type="contacts" user={user} 
         image={image}
          room={
-            rooms.find((room) => room.participantsArray.includes(contact.email)
+            unfilteredRooms.find((room) => room.participantsArray.includes(contact.email)
         )} />
     )
 }

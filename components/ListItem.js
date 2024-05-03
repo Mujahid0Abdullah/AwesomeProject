@@ -4,7 +4,15 @@ import { useNavigation } from '@react-navigation/native'
 import GlobalContext from '../context/Context'
 import {Grid, Row,Col} from "react-native-easy-grid"
 import Avatar from "./Avatar"
-export default function ListItem({description,user,time,room,image,type,style}) {
+export default function ListItem({
+  description
+  ,user
+  ,time
+  ,room
+  ,image
+  ,type
+  ,style
+}) {
   const navigation = useNavigation()
   const {theme: {color}}= useContext(GlobalContext)
     return (

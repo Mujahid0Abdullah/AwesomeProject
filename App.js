@@ -14,6 +14,8 @@ import Profile from "./screens/Profile.js"
 import Chats from "./screens/Chats.js"
 import Photo from "./screens/Photo.js"
 import Contacts from './screens/Contacts.js';
+import Chat from "./screens/Chat.js"
+import ChatHeader from './components/ChatHeader.js';
 const auth = getAuth(app);
 
 LogBox.ignoreLogs([
@@ -77,6 +79,8 @@ function App() {
       name='contacts' style={{backgroundColor:"#445354"}}
       options={{title:"Doktor Seç"}} 
       component={Contacts}/>
+
+      <Stack.Screen name='chat' component={Chat} options={{headerTitle: (props)=> <ChatHeader {...props}/> }} />
      </Stack.Navigator> 
      )}
      
