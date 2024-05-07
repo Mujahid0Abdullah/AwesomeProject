@@ -1,40 +1,27 @@
+<h1>Doctor Consultation App</h1>
+Project Purpose:
+The main purpose of this project is to facilitate communication between doctors and patients and simplify the process of making an appointment. Thanks to the mobile application, users can communicate with their doctors quickly and effectively, make appointments and receive health consultancy.
 
-  <center><h1 >Doktor Danışma App</h1></center>                                                         
-<h1>Proje Amacı:</h1>
+Project scope:
 
-Bu projenin temel amacı, doktorlar ile hastalar arasındaki iletişimi kolaylaştırmak ve randevu alma sürecini basitleştirmektir. Mobil uygulama sayesinde kullanıcılar, hızlı ve etkili bir şekilde doktorlarıyla iletişim kurabilir, randevu alabilir ve sağlık danışmanlığı alabilirler.
+➡️Functional Needs:
 
-Proje Kapsamı:
+Creating an account and logging in Creating and editing a profile Finding doctors and making appointments Messaging and health consultation with doctors Receiving and managing notifications Participating in community events and sharing information Finding doctors with the search and filter feature
 
-➡️İşlevsel İhtiyaçlar:
+➡️Non-Functional Needs:
 
->Hesap oluşturma ve giriş yapma
->Profil oluşturma ve düzenleme
->Doktorları bulma ve randevu alma
->Doktorlarla mesajlaşma ve sağlık danışmanlığı
->Bildirim alma ve yönetme
->Topluluk etkinliklerine katılma ve bilgi paylaşma
->Arama ve filtreleme özelliği ile doktorları bulma
+User-friendly interface Data privacy and security High performance and fast operation Testability, maintainability and scalability
 
-➡️İşlevsel Olmayan İhtiyaçlar:
+System Users:
+-Patients
 
->Kullanıcı dostu arayüz
->Veri gizliliği ve güvenliği
->Yüksek performans ve hızlı çalışma
->Test edilebilirlik, sürdürülebilirlik ve ölçeklenebilirlik
+-Doctors
 
-<h2>Sistem Kullanıcıları: </h2>
-
--Hastalar
-
--Doktorlar
-
-<h2>Kullanılacak Teknolojiler:</h2>
-
+Technologies to be used:
 Frontend: React Native
 
 Backend: Firebase
 
-Veritabanı: Firebase Realtime Database veya Firestore
+Database: Firebase Realtime Database or Firestore
 
-Araçlar: Visual Studio Code, Git, GitHub, Trello
+Tools: Visual Studio Code, Git, GitHub, Trello
