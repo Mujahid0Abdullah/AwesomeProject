@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, Image, TextInput, Button, TouchableOpacity } fro
 import  Context  from '../context/Context';
 import { signIn, signUp } from '../firebase';
 import { useNavigation } from "@react-navigation/native";
-export default function SignIn (){
+export default function SignInDoctor (){
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [mode, setMode] =useState("signUp")
@@ -24,7 +24,7 @@ export default function SignIn (){
          textAlign : "center", fontFamily:"Roboto"}}>
 
            <TouchableOpacity title="doktor"
-      onPress={() => navigation.navigate("Doktor Girişi")}
+      onPress={() => navigation.navigate("sign In")}
       style={{
         position: "absolute",
         right: 20,
@@ -38,7 +38,7 @@ export default function SignIn (){
         padding:3,
         justifyContent: "center",
       }}
-    ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
+    ><Text style={{ textAlign : "center",color:"white"}}>Kullanıcı Girişi </Text></TouchableOpacity>
         <Text style={{color:"black",fontSize:24, marginBottom:20,verticalAlign:'top'}}>    {mode !== "signUp" ? "Merhaba, Buradan Giriş yapabilirsiniz...": "Merhaba, Buradan Kayıt yapabilirsiniz..."} </Text>
           
       <View style={styles.view}>

@@ -16,6 +16,7 @@ import Photo from "./screens/Photo.js"
 import Contacts from './screens/Contacts.js';
 import Chat from "./screens/Chat.js"
 import ChatHeader from './components/ChatHeader.js';
+import SignInDoctor from './screens/SignInDoctor.js';
 const auth = getAuth(app);
 
 LogBox.ignoreLogs([
@@ -55,6 +56,12 @@ function App() {
            name='sign In'
             component={SignIn}/>
 
+          <Stack.Screen 
+          options={{headerStyle:{backgroundColor:"#128c7e",borderBottomLeftRadius:19,borderBottomRightRadius:19}}}
+           style={{alignItems:"center"}} 
+           name='Doktor Girişi'
+            component={SignInDoctor}/>
+
           
         </Stack.Navigator>
       ):( 
@@ -89,7 +96,7 @@ function App() {
 }
 function Home(){
   return <Tab.Navigator>
-    <Tab.Screen name="photo" component={Photo}/>
+    <Tab.Screen name="PROFILE" component={Profile}/>
     <Tab.Screen name="chats" component={Chats}/>
   </Tab.Navigator>
 }

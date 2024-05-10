@@ -220,7 +220,7 @@ export default function Chat() {
             containerStyle={{
               marginLeft: 10,
               marginRight: 10,
-              marginBottom: 5,
+              marginBottom: 1,
               borderRadius: 17,
               paddingTop: 5,
             }}
