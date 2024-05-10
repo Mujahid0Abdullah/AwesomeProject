@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function Profile (){
+export default function OtherProfile (){
     const  { theme : {colors}}= useContext(Context)
     const [displayName ,setDisplayName]= useState(""
     );
