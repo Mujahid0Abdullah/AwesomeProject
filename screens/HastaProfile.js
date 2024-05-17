@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-export default function Profile (){
+export default function HastaProfile (){
     const  { theme : {colors}}= useContext(Context)
     const [displayName ,setDisplayName]= useState("");
     const [uzmanlik ,setUzmanlik]= useState("");
@@ -34,7 +34,7 @@ export default function Profile (){
   var collectiondata={};
 
 
-
+  //current user tüm bilgileri getirmek
    async function fetchData(){
     const docRef = doc(db, "users",auth.currentUser.uid );
 
@@ -42,7 +42,7 @@ export default function Profile (){
     var  data={};
     if (docSnap.exists()) {
     setuse(docSnap.data());
-     data = docSnap.data();
+     data = docSnap.data();//kullanıcı bilgileri
    collectiondata=docSnap.data();
   //const  pic = docSnap.data().photo;
      console.log("data is :", data);
@@ -67,7 +67,8 @@ export default function Profile (){
     const data =await fetchData()
     const userData = { displayName,
       email: user.email
-      ,userType:data.userType?data.userType:"user",
+
+      ,userType:data.userType,
       uzmanlik,
     }
     if (photoURL){
@@ -113,8 +114,11 @@ export default function Profile (){
     padding: Constants.statusBarHeight +20,
     padding:20
 }}>
-          <Text style={styles.textInfo}> Profile Info </Text>
-          <Text style={styles.textInfo2}>  resim ekleyebilirsiniz </Text>
+          
+         <Text style={styles.textInfo2}>  resim ekleyebilirsiniz </Text>
+     
+       
+        <View style={{ marginTop: "auto"}}>
         <TouchableOpacity 
         onPress={handleProfilePicture}
         style={styles.img}>
@@ -128,8 +132,6 @@ export default function Profile (){
     <Image source={{ uri: selectedImage }} style={{ width: "100%", height: "100%", borderRadius: 120 }} />
   )}
         </TouchableOpacity >
-       
-        <View style={{ marginTop: "auto"}}>
         <TextInput
           placeholder="Adınız yazın"
           value={!displayName ? (user1.displayName):(displayName)}
@@ -155,9 +157,34 @@ export default function Profile (){
         
           }}
         />
-        <Text >{use.uzmanlik ? (use.uzmanlik):("Genel")}</Text>
+        <TextInput
+          placeholder="Adınız yazın"
+          value={!displayName ? (user1.displayName):(displayName)}
+          onChangeText={setDisplayName}
+          style={{
+            
+                borderBottomColor : "#128c7e",
+                marginBottom:20,
+                width:300,
+                //backgroundColor: URL("../asset/kayıtol.jpg"),
+                backgroundColor:"white",
+                textAlign: 'center',
+                borderRadius:9,
+                borderWidth:2,
+            
+                height:55,
+                borderColor: "#e5e5e5",
+                borderCurve : 'circular'      
+              ,
+            
+            marginTop: "40",
+          
+        
+          }}
+        />
+        <Text >Yaş: {use.uzmanlik ? (use.uzmanlik):("Genel")}</Text>
          <TextInput
-          placeholder="Uzmanlık"
+          placeholder="Yaş"
           
           onChangeText={setUzmanlik}
           style={{
@@ -200,9 +227,10 @@ styles = StyleSheet.create ({
     img:{
         marginTop: 30,
     borderRadius : 120 ,
+    marginBottom:4,
     width: 120,
     height: 120,
-    justifyContent:"center",
+    justifyContent:"center",alignSelf:'center',
     alignItems: 'center',
     backgroundColor: "#fefefe"
     }

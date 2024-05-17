@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Button } from 'react-native'
 import React, { useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import GlobalContext from '../context/Context'
@@ -16,6 +16,11 @@ export default function ListItem({
   const navigation = useNavigation()
   const {theme: {color}}= useContext(GlobalContext)
     return (
+      <View style={{backgroundColor:"#ffffff",marginBottom:9,marginTop:9,borderRadius:19 ,marginBottom:4 , shadowColor: "black",
+  shadowOffset: { width: 0, height: 2 }, // Gölge boyutu ve yönü
+  shadowOpacity: 0.25, // Gölge opaklığı
+  shadowRadius: 4, // Gölge yayılımı
+  elevation: 5 }}>
     <TouchableOpacity 
     style={{height:80,...style}}
     onPress={()=>navigation.navigate("chat",{user,room,image})}>
@@ -36,5 +41,9 @@ export default function ListItem({
         </Col>
       </Grid>
     </TouchableOpacity>
+    <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user,room,image})}>
+    <Text style={{ color: "white", textAlign: "center" }}>Randevu Al</Text>
+  </TouchableOpacity> 
+     </View>
   )
 }

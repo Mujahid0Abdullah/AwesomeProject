@@ -8,7 +8,7 @@ export default function Avatar({ size, user }) {
       style={{
         width: size,
         height: size,
-        borderRadius: size,
+        borderRadius: 20,
       }}
       source={
         user.photoURL
