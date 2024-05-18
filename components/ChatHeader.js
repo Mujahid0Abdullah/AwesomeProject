@@ -21,7 +21,7 @@ export default function ChatHeader() {
           justifyContent: "center",
         }}
       >
-        <Text style={{ color: colors.white, fontSize: 18 }}>
+        <Text style={{ color: "#1B0AE8", fontSize: 18,textAlign: "left" }}>
           {route.params.user.contactName || route.params.user.displayName}
         </Text>
       </View>

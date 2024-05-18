@@ -7,6 +7,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import { updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import  {getStorage} from "firebase/storage"
 import {initializeFirestore} from "firebase/firestore"
 // Your web app's Firebase configuration
@@ -30,6 +32,24 @@ export const db = initializeFirestore(app ,{ experimentalForseLongPollinng: true
 export function signIn(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
+
+
+
+/*
 export function signUp(email, password) {
   return createUserWithEmailAndPassword(auth, email, password);
+}*/
+
+
+
+export function signUp(email, password, userType) {
+  return createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Kullanıcı başarıyla oluşturulduğunda, Firestore'da bir belge oluştur
+    const user = userCredential.user;
+    return setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      userType: userType
+    });
+  });
 }

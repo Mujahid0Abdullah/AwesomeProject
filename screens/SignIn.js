@@ -1,5 +1,5 @@
 import React, { Component, useContext, useState } from 'react';
-import {StyleSheet, View, Text, Image, TextInput, Button, TouchableOpacity } from 'react-native';
+import {StyleSheet,Switch, View, Text, Image, TextInput, Button, TouchableOpacity } from 'react-native';
 import  Context  from '../context/Context';
 import { signIn, signUp } from '../firebase';
 import { useNavigation } from "@react-navigation/native";
@@ -8,14 +8,28 @@ export default function SignIn (){
   const [password, setPassword] = useState("")
   const [mode, setMode] =useState("signUp")
   const{ theme:{colors}} = useContext(Context)
-  async function handlePress(){
+  /*async function handlePress(){
     if (mode ==="signUp"){
       await signUp(email, password)
     }
     if (mode ==="signIn"){
       await signIn(email,password)
     }
+  }*/
+
+// Add a new state variable for user type
+const [userType, setUserType] = useState("patient");
+
+// Update the handlePress function to include user type in sign up
+async function handlePress(){
+  if (mode === "signUp"){
+    await signUp(email, password, userType)
   }
+  if (mode === "signIn"){
+    await signIn(email, password)
+  }
+}
+
   const navigation = useNavigation();
     return (
       <View style={{justifyContent:'flex-end',alignItems:'center'
@@ -39,24 +53,35 @@ export default function SignIn (){
         justifyContent: "center",
       }}
     ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
-        <Text style={{color:"black",fontSize:24, marginBottom:20,verticalAlign:'top'}}>    {mode !== "signUp" ? "Merhaba, Buradan Giriş yapabilirsiniz...": "Merhaba, Buradan Kayıt yapabilirsiniz..."} </Text>
+    <Switch
+      value={userType === "doctor"}
+      onValueChange={(newValue) => setUserType(newValue? "doctor" : "patient")}
+      thumbColor={colors.button} // Set the thumb color to the button color
+      trackColor={{ true: colors.button, false: colors.button }} // Set the track color to the button color
+    />
+<Text>{userType === "patient"? "I am a patient" : "I am a doctor"}</Text>
           
       <View style={styles.view}>
+        
         <TextInput style={styles.container} 
         value={email}
         onChangeText={setEmail}
         placeholder='Email'/>
+
         <TextInput
         value={password}
         onChangeText={setPassword}
         secureTextEntry style={styles.container } placeholder='Password'/>
         </View>
+        
         <View style={styles.view2}>
           <Button
           onPress={handlePress}
           disabled={!password || !email}
           style={{width:200 }} width={"50%"} color={colors.button} title={mode === "signUp"?'       Kayıt Ol       ':"       Giriş      "}/>
         </View>
+
+        
         <TouchableOpacity style= {{padding:10, verticalAlign:'bottom'}} onPress={() => mode === "signUp" ? setMode("signIn"): setMode("signUp")}>
           <Text>
             {mode === "signUp" ? "hesapiniz varsa ,Giriş yapailirsiniz.": "hesapiniz yok ise , Kayıt olun."}
@@ -85,7 +110,7 @@ export default function SignIn (){
     },
     view:{
       alignItems: 'center',
-      marginTop: 20 ,backgroundColor: "#128c7e",
+      marginTop: 20 ,backgroundColor: "#34b7f1",
       width: "100%",
       borderTopLeftRadius:19,
       borderTopRightRadius:19,

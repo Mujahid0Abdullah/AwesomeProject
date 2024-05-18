@@ -158,9 +158,10 @@ export default function Chat() {
 
   return (
     <ImageBackground
-      resizeMode="cover"
-      source={require("../assets/kayıtol.jpg")}
-      style={{ flex: 1 }}
+      resizeMode="repeat"
+      
+      //source={require("../assets/Vector.png")}
+      style={{ flex: 1 , opacity:55,backgroundColor:"#e9f5f9"}}
     >
       <GiftedChat
         onSend={onSend}
@@ -210,7 +211,7 @@ export default function Chat() {
                 }
               }}
             >
-              <Ionicons name="send" size={20} color={colors.white} />
+              <Ionicons name="send" size={20} color={"#ffffff"} />
             </TouchableOpacity>
           );
         }}
