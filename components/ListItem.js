@@ -14,6 +14,8 @@ export default function ListItem({
   ,style
 }) {
   const navigation = useNavigation()
+  console.log("listitem user")
+  console.log(user)
   const {theme: {color}}= useContext(GlobalContext)
     return (
       <View style={{backgroundColor:"#ffffff",marginBottom:9,marginTop:9,borderRadius:19 ,marginBottom:4 , shadowColor: "black",
@@ -41,9 +43,12 @@ export default function ListItem({
         </Col>
       </Grid>
     </TouchableOpacity>
-    <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user,room,image})}>
-    <Text style={{ color: "white", textAlign: "center" }}>Randevu Al</Text>
-  </TouchableOpacity> 
+    {user.userType === 'doctor' && (
+         <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user,room,image})}>
+         <Text style={{ color: "white", textAlign: "center" }}>Randevu Al</Text>
+       </TouchableOpacity> 
+      )}
+ 
      </View>
   )
 }
