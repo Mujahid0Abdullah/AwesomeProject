@@ -4,24 +4,22 @@
     "slug": "doktor",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/health-care.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/health-care.png",
+      "resizeMode": "center",
+      "width": 50,
+      "height":50,
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      
-        "package": "com.ee.doktor",
-        "versionCode": 1
-      ,
+      "package": "com.ee.doktor",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

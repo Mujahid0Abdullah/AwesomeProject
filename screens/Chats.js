@@ -29,7 +29,8 @@ export default function Chats() {
 
     fetchData();
   }, []); // Bu boş bağımlılık dizisi, yalnızca bileşen yüklendiğinde bir kez çalışmasını sağlar
-console.log(data)
+  console.log("data")
+  console.log(data)
 
   useEffect(() => {
     const unsubscribe = onSnapshot(chatsQuery, (querySnapshot) => {
@@ -49,7 +50,7 @@ console.log(data)
   function getUserB(user, contacts) {
     const userContact = contacts.find((c) => c.email === user.email);
     if (userContact && userContact.displayName) {
-      return { ...user, contactName: userContact.displayName ,uzmanlik :userContact.uzmanlik  };
+      return { ...user, contactName: userContact.displayName ,uzmanlik :userContact.uzmanlik , userType:userContact.userType};
     }
     console.log(" user ")
     console.log(user)

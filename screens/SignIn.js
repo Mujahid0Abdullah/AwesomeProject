@@ -1,5 +1,5 @@
 import React, { Component, useContext, useState } from 'react';
-import {StyleSheet,Switch, View, Text, Image, TextInput, Button, TouchableOpacity } from 'react-native';
+import {StyleSheet,Switch, View, Text, Image, PreviewLayout,TextInput, Button, TouchableOpacity } from 'react-native';
 import  Context  from '../context/Context';
 import { signIn, signUp } from '../firebase';
 import { useNavigation } from "@react-navigation/native";
@@ -34,7 +34,7 @@ async function handlePress(){
     return (
       <View style={{justifyContent:'flex-end',alignItems:'center'
       ,flex:1
-        ,color:"blue" ,backgroundColor:colors.white,
+        ,color:"blue" ,backgroundColor:colors.white, 
          textAlign : "center", fontFamily:"Roboto"}}>
 
            <TouchableOpacity title="doktor"
@@ -53,16 +53,21 @@ async function handlePress(){
         justifyContent: "center",
       }}
     ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
-    <Switch
-      value={userType === "doctor"}
-      onValueChange={(newValue) => setUserType(newValue? "doctor" : "patient")}
-      thumbColor={colors.button} // Set the thumb color to the button color
-      trackColor={{ true: colors.button, false: colors.button }} // Set the track color to the button color
-    />
-<Text>{userType === "patient"? "I am a patient" : "I am a doctor"}</Text>
+   
+
           
       <View style={styles.view}>
-        
+        <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
+        <Switch
+    style={{alignSelf:"baseline", marginLeft:15}}
+      value={userType === "doctor"}
+      onValueChange={(newValue) => setUserType(newValue? "doctor" : "patient")}
+      thumbColor={colors.primary} // Set the thumb color to the button color
+      trackColor={{ true: colors.tertiary, false: colors.tertiary }} // Set the track color to the button color
+    />
+    <Text>{userType === "patient"? "I am a patient" : "I am a doctor"}</Text>
+        </View>
+    
         <TextInput style={styles.container} 
         value={email}
         onChangeText={setEmail}
