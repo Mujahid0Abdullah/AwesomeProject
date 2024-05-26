@@ -22,6 +22,7 @@ import Chat from "./screens/Chat.js"
 import ChatHeader from './components/ChatHeader.js';
 import SignInDoctor from './screens/SignInDoctor.js';
 import HastaProfile from './screens/HastaProfile.js';
+import PatientAppointmentsScreen from "./screens/PatientAppointmentsScreen.js"
 const auth = getAuth(app);
 /*
 LogBox.ignoreLogs([
@@ -106,7 +107,7 @@ function App() {
 
       {!currUser.displayName && (
  <Stack.Screen 
- name='profile' component={Profile} 
+ name='profile' component={userType==="doctor" ?Profile:HastaProfile} 
  options={{headerShown:false}}/>
       )}
      
@@ -127,7 +128,7 @@ function App() {
       options={{title:"Doktor"}} 
       component={Doctorapp}/>
    
-     <Stack.Screen name='Hastaprofile' component={HastaProfile} options={{headerShown:false}}/>
+      <Stack.Screen name='Hastaprofile' component={HastaProfile} options={{headerShown:false}}/>
 
       <Stack.Screen name='chat' component={Chat} options={{headerTitle: (props)=> <ChatHeader {...props}/> }} />
      </Stack.Navigator> 
@@ -156,8 +157,9 @@ function Home(){
 
 
   return <Tab.Navigator>
-    <Tab.Screen name="PROFILE" component={!userType==="patient" ?Profile:HastaProfile}/>
+    <Tab.Screen name="PROFILE" component={userType==="doctor" ?Profile:HastaProfile}/>
     <Tab.Screen name="chats" component={Chats}/>
+    <Tab.Screen name="Randevularım" component={PatientAppointmentsScreen}/>
   </Tab.Navigator>
 }
 

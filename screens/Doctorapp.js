@@ -39,12 +39,17 @@ export default function Doctorapp() {
   console.log("userb doktor")
   console.log(userB)
   const handleTimeSelect = async (hour, minute) => {
+    console.log("minute")
+    console.log(minute)
     const appointmentTime = new Date(selectedDate);
     appointmentTime.setHours(hour);
     appointmentTime.setMinutes(minute);
+    console.log(appointmentTime.toISOString())
 
     const appointmentData = {
       doktorEmail: userB.email,
+      //doctor id nonuseble
+      doktordisplayName:userB.displayName,
       doctorId: "xWLtqtFHjqa2Z7LS2e5KtpRH5Vg1",
       patientId: auth.currentUser.uid,
       date: selectedDate.toDateString(),
@@ -53,23 +58,26 @@ export default function Doctorapp() {
     };
 
     await addDoc(collection(db, "appointments"), appointmentData);
+    
     console.log('Randevu eklendi:', appointmentData);
   };
-
   const renderAppointmentTimes = () => {
     const times = [];
-    const bookedTimes = appointments.map(app => new Date(app.time).getHours() + ':' + new Date(app.time).getMinutes());
-    console.log("bookedTimes")
-
-    console.log(bookedTimes)
+    const bookedTimes = appointments.map(app => {
+      const date = new Date(app.time);
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    });
+  
     for (let i = 8; i < 17; i++) {
       for (let j = 0; j < 2; j++) {
         const hour = i + Math.floor(j * 0.5);
         const minute = j === 0 ? '00' : '30';
         const timeString = `${hour < 10 ? '0' + hour : hour}:${minute}`;
-        const isBooked = bookedTimes.includes(`${hour}:${minute}`);
+        const isBooked = bookedTimes.some(bookedTime => bookedTime === timeString);
         const buttonStyle = isBooked ? styles.bookedTime : styles.availableTime;
-
+  
         times.push(
           <TouchableOpacity
             key={`${hour}-${minute}`}
@@ -113,7 +121,7 @@ export default function Doctorapp() {
                 key={day.date.toString()}
                 onPress={() => handleDateSelect(day)}
                 style={day.date.toDateString() === selectedDate.toDateString() ? styles.selectedDateButton : styles.dateButton}
-                disabled={day.date < new Date()}
+                //disabled={day.date < new Date()}
               >
                 <Text style={styles.dateText}>{day.dayString}</Text>
               </TouchableOpacity>
@@ -147,26 +155,28 @@ const styles = StyleSheet.create({
     marginBottom: 19,
   },
   dateButton: {
-    margin: 14,
-    width: 45,
-    height: 45,
+    margin: 10,
+    width: 55,
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#007BFF',
+
   },
   selectedDateButton: {
-    margin: 14,
-    width: 45,
-    height: 45,
+    margin: 10,
+    width: 75,
+    height: 55,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 10,
     backgroundColor: '#007BFF',
+  
   },
   dateText: {
-    color: '#fff',
+    color:"#000000"
   },
   timeButton: {
     margin: 5,

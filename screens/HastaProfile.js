@@ -1,252 +1,265 @@
-import React, { Component,useEffect, useContext, useState } from 'react';
-import { Image,Button,TextInput,View, Text, Touchable ,TouchableOpacity} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React, { Component, useEffect, useContext, useState } from "react";
+import {
+  Image,
+  Button,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,Switch
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
-import { StyleSheet } from 'react-native';
-import {auth, db} from "../firebase.js"
-import {pickImage,askForPermission, uploadImage} from "../utils.js"
- import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { StyleSheet } from "react-native";
+import { auth, db } from "../firebase.js";
+import { pickImage, askForPermission, uploadImage } from "../utils.js";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import Context from "../context/Context"
-import { updateProfile } from 'firebase/auth';
-import { doc, setDoc,getDoc } from 'firebase/firestore';
+import Context from "../context/Context";
+import { updateProfile } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
+export default function Profile() {
+  const {
+    theme: { colors },
+  } = useContext(Context);
 
+  const [displayName, setDisplayName] = useState("");
+  const [age, setAge] = useState("");
+  const [telefonNo, setTelefonNo] = useState(""); // New field for hospital
+  const [kilo, setKilo] = useState(""); // New field for hospital
 
+  const [userGen, setUserGen] = useState("Erkek"); // New field for hospital
 
-export default function HastaProfile (){
-    const  { theme : {colors}}= useContext(Context)
-    const [displayName ,setDisplayName]= useState("");
-    const [uzmanlik ,setUzmanlik]= useState("");
-    const [use , setuse]=useState("");
-    //const [use , setuse]=useState(auth.currentUser)
-    const [selectedImage , setSelectedImage]= useState(null)
-    const [permissionStatus, setPermissionStatus] = useState(null);
-    const navigation = useNavigation()
+  const [desc, setDesc] = useState(""); // New field for title
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [permissionStatus, setPermissionStatus] = useState(null);
+  const navigation = useNavigation();
+
   useEffect(() => {
     (async () => {
       const status = await askForPermission();
       setPermissionStatus(status);
     })();
   }, []);
-  var collectiondata={};
 
+  var collectionData = {};
 
-  //current user tüm bilgileri getirmek
-   async function fetchData(){
-    const docRef = doc(db, "users",auth.currentUser.uid );
-
+  async function fetchData() {
+    const docRef = doc(db, "users", auth.currentUser.uid);
     const docSnap = await getDoc(docRef);
-    var  data={};
-    if (docSnap.exists()) {
-    setuse(docSnap.data());
-     data = docSnap.data();//kullanıcı bilgileri
-   collectiondata=docSnap.data();
-  //const  pic = docSnap.data().photo;
-     console.log("data is :", data);
-     //console.log("pic is :", pic);
-   } else {
-     // doc.data() will be undefined in this case
-    console.log("No such document!");
-   } return data
-   }
 
-   //update yada next button handle
-  async function handlePress (){
-    const user= auth.currentUser
-    let photoURL
-    if(selectedImage){
-      const {url}= await uploadImage(
-        selectedImage,
-        `images/${user.uid}`,
-        "profilePicture");
-    photoURL=url;
+    var data = {};
+    if (docSnap.exists) {
+      setDisplayName(
+        docSnap.data().displayName ? docSnap.data().displayName : ""
+      );
+      setAge(docSnap.data().age ? docSnap.data().age : ""); // Set age if present
+      setTelefonNo(docSnap.data().telefonNo ? docSnap.data().telefonNo : ""); // Set telefonNo if present
+      setDesc(docSnap.data().desc ? docSnap.data().desc : ""); // Set desc if present
+      //setUse(docSnap.data());
+      data = docSnap.data();
+      collectionData = docSnap.data();
+      console.log("data is :", data);
+    } else {
+      console.log("No such document!");
     }
-    const data =await fetchData()
-    const userData = { displayName,
-      email: user.email
-
-      ,userType:data.userType,
-      uzmanlik,
-    }
-    if (photoURL){
-      userData.photoURL= photoURL
-    }
-    await Promise.all([
-      updateProfile(user, userData)
-    , setDoc(doc(db,"users",user.uid),{...userData,uid:user.uid})
-    ])
-    navigation.navigate("home")
-
+    return data;
   }
 
-//pofile picture
-    async function handleProfilePicture() {
-        const result = await pickImage();
-        
-        console.log("ddd"+ result.assets.uri)
-        if (!result.cancelled) {
-          setSelectedImage(result.assets[0].uri);
-        }
-      }
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
+  async function handlePress() {
+    const user = auth.currentUser;
+    let photoURL;
+    if (selectedImage) {
+      const { url } = await uploadImage(
+        selectedImage,
+        `images/${user.uid}`,
+        "profilePicture"
+      );
+      photoURL = url;
+    }
+    const data = await fetchData(); // Fetch data to pre-fill some fields
+    const userData = {
+      displayName,
+      email: user.email,
+      userType: "patient",
+      userGen,
+      age,
+      telefonNo,
+      desc, // Include new fields
+      kilo
+    };
+    console.log(userData);
+    if (photoURL) {
+      userData.photoURL = photoURL;
+    }
+    await Promise.all([
+      updateProfile(user, userData),
+      setDoc(doc(db, "users", user.uid), { ...userData, uid: user.uid }),
+    ]);
+    navigation.navigate("home");
+  }
 
+  async function handleProfilePicture() {
+    const result = await pickImage();
 
-      const user1= auth.currentUser
-      const img1 =user1.photoURL
-      //console.log(use.displayName +user1.displayName +auth.currentUser+"   "+ img1)
-      console.log("use")
-      console.log(use)
-      console.log("uzmanlik")
-      console.log(user1.uzmanlik)
+    console.log("ddd+" + result.assets.uri);
+    if (!result.cancelled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  }
 
-
-
-    return (
-        <React.Fragment>
-            <StatusBar style="auto"/>
-<View style={{
-    alignItems:'center',
-    justifyContent:'center',
-    flex:1,
-    padding: Constants.statusBarHeight +20,
-    padding:20
-}}>
-          
-         <Text style={styles.textInfo2}>  resim ekleyebilirsiniz </Text>
-     
-       
-        <View style={{ marginTop: "auto"}}>
-        <TouchableOpacity 
-        onPress={handleProfilePicture}
-        style={styles.img}>
-             {!selectedImage ? (
-    !img1 ? (
-      <MaterialCommunityIcons size={45} name='camera-plus' color={colors.iconGray} />
-    ) : (
-      <Image source={{ uri: img1 }} style={{ width: "100%", height: "100%", borderRadius: 120 }} />
-    )
-  ) : (
-    <Image source={{ uri: selectedImage }} style={{ width: "100%", height: "100%", borderRadius: 120 }} />
-  )}
-        </TouchableOpacity >
-        <TextInput
-          placeholder="Adınız yazın"
-          value={!displayName ? (user1.displayName):(displayName)}
-          onChangeText={setDisplayName}
+  const user1 = auth.currentUser;
+  const img1 = user1.photoURL;
+  return (
+    <React.Fragment>
+      <StatusBar style="auto" />
+      <ScrollView style={{ flex: 1 }}>
+        <View
           style={{
-            
-                borderBottomColor : "#128c7e",
-                marginBottom:20,
-                width:300,
-                //backgroundColor: URL("../asset/kayıtol.jpg"),
-                backgroundColor:"white",
-                textAlign: 'center',
-                borderRadius:9,
-                borderWidth:2,
-            
-                height:55,
-                borderColor: "#e5e5e5",
-                borderCurve : 'circular'      
-              ,
-            
-            marginTop: "40",
-          
-        
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            padding: Constants.statusBarHeight + 20,
+            padding: 20,
           }}
-        />
-        <TextInput
-          placeholder="Adınız yazın"
-          value={!displayName ? (user1.displayName):(displayName)}
-          onChangeText={setDisplayName}
-          style={{
-            
-                borderBottomColor : "#128c7e",
-                marginBottom:20,
-                width:300,
-                //backgroundColor: URL("../asset/kayıtol.jpg"),
-                backgroundColor:"white",
-                textAlign: 'center',
-                borderRadius:9,
-                borderWidth:2,
-            
-                height:55,
-                borderColor: "#e5e5e5",
-                borderCurve : 'circular'      
-              ,
-            
-            marginTop: "40",
-          
-        
-          }}
-        />
-        <Text >Yaş: {use.uzmanlik ? (use.uzmanlik):("Genel")}</Text>
-         <TextInput
-          placeholder="Yaş"
-          
-          onChangeText={setUzmanlik}
-          style={{
-            
-                borderBottomColor : "#128c7e",
-                marginBottom:20,
-                width:300,
-                //backgroundColor: URL("../asset/kayıtol.jpg"),
-                backgroundColor:"white",
-                textAlign: 'center',
-                borderRadius:9,
-                borderWidth:2,
-            
-                height:55,
-                borderColor: "#e5e5e5",
-                borderCurve : 'circular'      
-              ,
-            
-            marginTop: "40",
-          
-        
-          }}
-        />
+        >
+          <Text style={styles.textInfo}>Hasta Profili</Text>
+          <Text >Profil resmini ekleyebilirsiniz</Text>
+          <TouchableOpacity onPress={handleProfilePicture} style={styles.img}>
+            {!selectedImage ? (
+              !img1 ? (
+                <MaterialCommunityIcons
+                  size={45}
+                  name="camera-plus"
+                  color={colors.iconGray}
+                />
+              ) : (
+                <Image
+                  source={{ uri: img1 }}
+                  style={{ width: "100%", height: "100%", borderRadius: 120 }}
+                />
+              )
+            ) : (
+              <Image
+                source={{ uri: selectedImage }}
+                style={{ width: "100%", height: "100%", borderRadius: 120 }}
+              />
+            )}
+          </TouchableOpacity>
+          <Text>{displayName}</Text>
+          <Text>{age}</Text>
+          {/* Ad Soyad Input */}
+          <TextInput
+            placeholder="Adınız ve Soyadınız"
+            value={displayName}
+            onChangeText={setDisplayName}
+            style={styles.Input}
+          />
+                    <Text style={styles.textInfo2} >yaşınız</Text>
+
+          {/* Input */}
+          <TextInput
+            placeholder="yaşınız"
+            value={age}
+            onChangeText={setAge}
+            style={styles.Input}
+          />
+                    <Text style={styles.textInfo2} >Kilonuz</Text>
+
+           <TextInput
+            placeholder="Kilonuz"
+            value={kilo}
+            onChangeText={setKilo}
+            style={styles.Input}
+          />
+           <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
+          <Text >{userGen}</Text>
+          <Switch
+      value={userGen === "Erkek"}
+      onValueChange={(newValue) => setUserGen(newValue? "Erkek" : "Kadın")}
+      thumbColor={colors.button} // Set the thumb color to the button color
+      trackColor={{ true: colors.button, false: colors.button }} // Set the track color to the button color
+    />
+    </View>
+         <Text style={styles.textInfo2} >Telefon No</Text>
+
+          {/* tno Input */}
+          <TextInput
+            placeholder="telefon No"
+            value={telefonNo}
+            onChangeText={setTelefonNo}
+            style={styles.Input}
+          />
+          <Text style={styles.textInfo2} >Açıklama</Text>
+
+          {/* Ünvan Input */}
+          <TextInput
+            placeholder="Açıklama"
+            value={desc}
+            onChangeText={setDesc}
+            style={styles.Input}
+          />
+
+          {/* Güncelle Butonu */}
           <Button
-            title= {(user1.displayName)?"Update" :"Next"}
-            color={colors.secondary}
-            style={{width: 40}}
+            title="Güncelle"
+            color={colors.button}
+            style={{ width: 300, marginTop: 20 }}
             onPress={handlePress}
-            disabled={!displayName}
+            disabled={!displayName || !age || !telefonNo || !desc}
           />
         </View>
-
-        </View>
-        </React.Fragment>
-      )
-    };
-
-  
-styles = StyleSheet.create ({
-    img:{
-        marginTop: 30,
-    borderRadius : 120 ,
-    marginBottom:4,
-    width: 120,
-    height: 120,
-    justifyContent:"center",alignSelf:'center',
-    alignItems: 'center',
-    backgroundColor: "#fefefe"
-    }
-    ,
-    textInfo:
-    {
-    fontSize:22,
-    color: "#3395ff"
-    }
-   
-,
-textInfo2:
-{
-fontSize:14,
-marginTop:20,
-color: "#000000"
+      </ScrollView>
+    </React.Fragment>
+  );
 }
 
-})
+const styles = StyleSheet.create({
+  img: {
+    marginTop: 30,
+    borderRadius: 120,
+    marginBottom: 4,
+    width: 120,
+    height: 120,
+    justifyContent: "center",
+    alignSelf: "center",
+    alignItems: "center",
+    backgroundColor: "#fefefe",
+  },
+  textInfo: {
+    fontSize: 22,
+    color: "#3395ff",
+  },
+
+  textInfo2: {
+    fontSize: 14,
+    marginTop: 10,
+    marginLeft:28,
+    color: "#000000",
+    
+    alignSelf:"flex-start"
+  },
+  Input: {
+    marginTop: 2,
+    borderBottomColor: "#92cbdf",
+    marginBottom: 20,
+    width: 300,
+    backgroundColor: "white",
+    textAlign: "center",
+    borderRadius: 9,
+    borderWidth: 2,
+    height: 55,
+    //borderColor: "#757575",
+    curve: "circular",
+  },
+});
