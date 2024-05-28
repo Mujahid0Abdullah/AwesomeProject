@@ -55,7 +55,10 @@ async function handlePress(){
     ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
    
 
-          
+   <Image
+        style={{ resizeMode:'contain',width:434,height:400, alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} 
+        source={require("../assets/kayitolsc.jpg")}
+      />
       <View style={styles.view}>
         <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
         <Switch
@@ -115,10 +118,10 @@ async function handlePress(){
     },
     view:{
       alignItems: 'center',
-      marginTop: 20 ,backgroundColor: "#34b7f1",
+      marginTop: -1 ,backgroundColor: "#34b7f1",
       width: "100%",
-      borderTopLeftRadius:19,
-      borderTopRightRadius:19,
+      borderTopLeftRadius:1,
+      borderTopRightRadius:1,
       borderRadius:19,
       verticalAlign:'bottom'
     },
