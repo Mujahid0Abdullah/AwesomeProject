@@ -23,6 +23,7 @@ import ChatHeader from './components/ChatHeader.js';
 import SignInDoctor from './screens/SignInDoctor.js';
 import HastaProfile from './screens/HastaProfile.js';
 import PatientAppointmentsScreen from "./screens/PatientAppointmentsScreen.js"
+import DoctorAppointmentsScreen from "./screens/DoctorAppointmentsScreen.js"
 const auth = getAuth(app);
 /*
 LogBox.ignoreLogs([
@@ -159,7 +160,7 @@ function Home(){
   return <Tab.Navigator>
     <Tab.Screen name="PROFILE" component={userType==="doctor" ?Profile:HastaProfile}/>
     <Tab.Screen name="chats" component={Chats}/>
-    <Tab.Screen name="Randevularım" component={PatientAppointmentsScreen}/>
+    <Tab.Screen name="Randevularım" component={userType==="doctor" ?DoctorAppointmentsScreen:PatientAppointmentsScreen}/>
   </Tab.Navigator>
 }
 

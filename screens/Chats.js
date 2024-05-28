@@ -59,7 +59,10 @@ export default function Chats() {
   return(
 
     <View style={styles.container}>
-    <FlatList style={{paddingBottom: 80}}
+    <FlatList style={{paddingBottom: 80}} 
+    ListEmptyComponent={() => (
+            <Text style={styles.emptyListText}>Henüz Chat'larınız yok.</Text>
+          )}
       data={rooms}
       keyExtractor={(item) => item.id.toString()} // Ensure unique key for each item
       renderItem={({ item }) => (
@@ -102,5 +105,9 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingRight: 10,
     
+  }, emptyListText: {
+    textAlign: "center",
+    alignContent:"center",
+    textAlignVertical:"center"
   },
 });

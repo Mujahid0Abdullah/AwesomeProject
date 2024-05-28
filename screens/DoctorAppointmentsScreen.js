@@ -1,4 +1,4 @@
-JavaScript;
+
 import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -14,14 +14,14 @@ import { auth, db } from "../firebase.js";
 import {
   collection,
   query,
-  where,
+  where,doc,
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
 
-export default function DoctorAppointments() {
+export default function DoctorAppointmentsScreen() {
   const route = useRoute();
-  const userB = route.params.user; // Doctor information
+  const userB = auth.currentUser; // Doctor information
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function DoctorAppointments() {
       const querySnapshot = await getDocs(q);
       const appointmentsData = [];
       querySnapshot.forEach((doc) => {
-        appointmentsData.push(doc.data());
+        appointmentsData.push({ ...doc.data(), id: doc.id }); // Belge verilerini ve belge ID'sini ekleyin
       });
       setAppointments(appointmentsData);
     };
