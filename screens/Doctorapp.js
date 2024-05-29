@@ -36,8 +36,12 @@ export default function Doctorapp() {
     };
     fetchAppointments();
   }, [selectedDate]);
+
+
   console.log("userb doktor")
   console.log(userB)
+
+
   const handleTimeSelect = async (hour, minute) => {
     console.log("minute")
     console.log(minute)
@@ -52,6 +56,8 @@ export default function Doctorapp() {
       doktordisplayName:userB.displayName,
       doctorId: "xWLtqtFHjqa2Z7LS2e5KtpRH5Vg1",
       patientId: auth.currentUser.uid,
+      patientEmail: auth.currentUser.email,
+      patientdisplayName: auth.currentUser.displayName,
       date: selectedDate.toDateString(),
       time: appointmentTime.toISOString(),
       bookedAt: Timestamp.now(),
@@ -60,7 +66,9 @@ export default function Doctorapp() {
     await addDoc(collection(db, "appointments"), appointmentData);
     
     console.log('Randevu eklendi:', appointmentData);
+    
   };
+  
   const renderAppointmentTimes = () => {
     const times = [];
     const bookedTimes = appointments.map(app => {
