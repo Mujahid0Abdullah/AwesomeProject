@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRoute } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
+//import QeRCode from 'qrcode';
+import QRCode from 'react-native-qrcode-svg';
+
+
 import {
   View,
-  Text,
+  Text,Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -14,6 +18,10 @@ import { collection, query, where, getDocs, addDoc, Timestamp } from 'firebase/f
 export default function Doctorapp() {
   const route = useRoute();
   const userB = route.params.user;
+
+  const [qrValue, setQrValue] = useState('');
+
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [upcomingDays, setUpcomingDays] = useState(getUpcomingDays());
@@ -73,7 +81,33 @@ export default function Doctorapp() {
   console.log("userb doktor")
   console.log(userB)
 
+  //%&%&%&%&%%&%&%&%&%%&%&%&%&%---------QR-------------%&%&%&%&%&%&%&%&%&%&%&%&%&%%&
+ /* useEffect(() => {
+    const generateQrCode = async () => {
+      try {
+        const url = `doctorapp://doctor/${userB}`;
+        const qr = await QRCode.toDataURL(url);
+        setQrCode(qr);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    generateQrCode();
+  }, [userB.email]);*/
 
+
+
+  useEffect(() => {
+    const userDetails = {
+      displayName: userB.displayName,
+      email: userB.email,
+      userType: userB.userType,
+      uzmanlik: userB.uzmanlik,
+    };
+    setQrValue(`doctorapp://${encodeURIComponent(JSON.stringify(userDetails))}`);
+  }, [userB]);
+
+//-----------------------------------------
   const handleTimeSelect = async (hour, minute) => {
     console.log("minute")
     console.log(minute)
@@ -154,7 +188,8 @@ export default function Doctorapp() {
       <View style={styles.container}>
         <Text style={styles.title}>{userB.displayName}</Text>
         <Text style={styles.subtitle}>{userB.uzmanlik}</Text>
-        <Text style={styles.subtitle}>{region[0]}</Text>
+        {qrValue ? <QRCode value={qrValue} size={200} /> : <Text>Loading...</Text>}
+       
         <MapView style={styles.map} region={region}>
             <Marker coordinate={region} title={"Doktor Kliniği"} />
           </MapView>
@@ -188,6 +223,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+  }, qrCode: {
+    width: 200,
+    height: 200,
   },
   subtitle: {
     fontSize: 16,

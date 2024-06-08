@@ -34,7 +34,7 @@ async function handlePress(){
     return (
       <View style={{justifyContent:'flex-end',alignItems:'center'
       ,flex:1
-        ,color:"blue" ,backgroundColor:colors.white, 
+        ,color:"blue" ,backgroundColor:"#f6f9fe", 
          textAlign : "center", fontFamily:"Roboto"}}>
 
            {/*<TouchableOpacity title="doktor"
@@ -57,18 +57,23 @@ async function handlePress(){
 
    <Image
         style={{ resizeMode:'contain',width:434,height:400, alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} 
-        source={require("../assets/kayitolsc.jpg")}
+        source={require("../assets/kayitolsc.png")}
       />
       <View style={styles.view}>
         <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
-        <Switch
-    style={{alignSelf:"baseline", marginLeft:15}}
-      value={userType === "doctor"}
-      onValueChange={(newValue) => setUserType(newValue? "doctor" : "patient")}
-      thumbColor={colors.primary} // Set the thumb color to the button color
-      trackColor={{ true: colors.tertiary, false: colors.tertiary }} // Set the track color to the button color
-    />
-    <Text>{userType === "patient"? "I am a patient" : "I am a doctor"}</Text>
+        
+        {mode === "signUp" ? (
+        <View style={styles.switchContainer}>
+          <Switch
+            style={styles.switch}
+            value={userType === "doctor"}
+            onValueChange={(newValue) => setUserType(newValue ? "doctor" : "patient")}
+            thumbColor={colors.primary}
+            trackColor={{ true: colors.tertiary, false: colors.tertiary }}
+          />
+          <Text>{userType === "patient" ? "I am a patient" : "I am a doctor"}</Text>
+        </View>
+      ) : null}
         </View>
     
         <TextInput style={styles.container} 
@@ -115,6 +120,13 @@ async function handlePress(){
       ,height:55,
       borderColor: "#e5e5e5",
       borderCurve : 'circular'      
+    },  switchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    switch: {
+      alignSelf: "baseline",
+      marginLeft: 15,
     },
     view:{
       alignItems: 'center',
