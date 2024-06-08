@@ -4,7 +4,7 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  FlatList,Alert,
   TouchableOpacity,
 } from 'react-native';
 import { auth, db, } from '../firebase.js';
@@ -66,14 +66,29 @@ const PatientAppointmentsScreen = () => {
             querySnapshot.forEach((doc) => {
               appointmentsData.push({ ...doc.data(), id: doc.id }); // Belge verilerini ve belge ID'sini ekleyin
             });
+            appointmentsData.sort((a, b) => new Date(a.time) - new Date(b.time));
+            appointmentsData.reverse()
             setAppointments(appointmentsData);
+         
           };
           fetchAppointments();
     }, [])
   );
   const handleDeleteAppointment = async (appointmentId) => {
-    try {
-      // Randevu belgesini silmek için referansı alın
+    Alert.alert(
+      "Randevuyu Sil",
+      "Seçili randevuyu silmek istediğinize emin misiniz?",
+      [
+        {
+          text: "İptal",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Sil",
+          onPress: async () => {
+            try {
+               // Randevu belgesini silmek için referansı alın
       const appointmentRef = doc(db, 'appointments', appointmentId);
       
       // Randevu belgesini silin
@@ -81,10 +96,21 @@ const PatientAppointmentsScreen = () => {
       
       // State'i güncelleyin
       const updatedAppointments = appointments.filter((app) => app.id !== appointmentId);
+
       setAppointments(updatedAppointments);
+      console.log("Randevu silindi:", appointmentId);
+
     } catch (error) {
-      console.error('Randevu silme hatası: ', error);
+      console.error("Randevu silme hatası:", error);
+      Alert.alert("Hata", "Randevu silinemedi!");
     }
+            
+           
+          },
+        },
+      ]
+    );
+
   };
   
   const renderAppointmentItem = ({ item }) => {

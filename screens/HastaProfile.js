@@ -15,6 +15,9 @@ import { StyleSheet } from "react-native";
 import { auth, db } from "../firebase.js";
 import { pickImage, askForPermission, uploadImage } from "../utils.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import messaging from '@react-native-firebase/messaging';
+import app from "@react-native-firebase/app"
+import * as firebase from 'firebase/app';
 
 import Context from "../context/Context";
 import { updateProfile } from "firebase/auth";
@@ -46,6 +49,52 @@ export default function Profile() {
     })();
   }, []);
 
+/*
+  const saveTokenToDatabase = async (token) => {
+    if (auth.currentUser) {
+      const userDoc = doc(db, 'users', auth.currentUser.uid);
+      await setDoc(userDoc, { token }, { merge: true });
+    }
+  };
+  
+  const getToken = async () => {
+    console.log("gettoken")
+    const token = await messaging().getToken();
+    console.log(token)
+    saveTokenToDatabase(token);
+  };
+
+  messaging().getToken()
+  .then(fcmToken => {
+    if (fcmToken) {
+      console.log(fcmToken)
+    } else {
+      console.log("fcmToken yok")
+    } 
+  });*/
+  /*
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      getToken();
+    }
+  };*/
+  /*
+  useEffect(() => {
+    //requestUserPermission();
+    messaging().onTokenRefresh((token) => {
+      saveTokenToDatabase(token);
+    });
+  }, []);
+*/
+
+
+
   var collectionData = {};
 
   async function fetchData() {
@@ -71,8 +120,10 @@ export default function Profile() {
   }
 
   useFocusEffect(
-    React.useCallback(() => {
+    React.useCallback(() => { 
       fetchData();
+     
+
     }, [])
   );
 

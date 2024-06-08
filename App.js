@@ -6,6 +6,7 @@ import {useAssets} from "expo-asset";
 import {createStackNavigator} from "@react-navigation/stack"
 import {NavigationContainer} from "@react-navigation/native"
 import { doc, setDoc,getDoc } from 'firebase/firestore';
+import * as Notifications from 'expo-notifications';
 
 
 import { getAuth,onAuthStateChanged } from'@firebase/auth';
@@ -17,6 +18,7 @@ import Profile from "./screens/Profile.js"
 import Chats from "./screens/Chats.js"
 import Photo from "./screens/Photo.js"
 import Contacts from './screens/Contacts.js';
+import messaging from '@react-native-firebase/messaging';
 import Doctorapp from './screens/Doctorapp.js';
 import Chat from "./screens/Chat.js"
 import ChatHeader from './components/ChatHeader.js';
@@ -24,6 +26,8 @@ import SignInDoctor from './screens/SignInDoctor.js';
 import HastaProfile from './screens/HastaProfile.js';
 import PatientAppointmentsScreen from "./screens/PatientAppointmentsScreen.js"
 import DoctorAppointmentsScreen from "./screens/DoctorAppointmentsScreen.js"
+import {PermissionsAndroid} from 'react-native';
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 const auth = getAuth(app);
 /*
 LogBox.ignoreLogs([
@@ -40,6 +44,102 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [userType, setUserType] = useState(null);
   const {theme: {colors}} = useContext(Context)
+  
+  const saveTokenToDatabase = async (token) => {
+    if (auth.currentUser) {
+      const userDoc = doc(db, 'users', auth.currentUser.uid);
+      await setDoc(userDoc, { token }, { merge: true });
+    }
+  };
+  /*
+  const getToken = async () => {
+    console.log("gettoken")
+    const token = (await Notifications.getDevicePushTokenAsync()).data;
+
+    //const token = await firebase.messaging().getToken();
+    console.log(token)
+    saveTokenToDatabase(token);
+  };*/
+/*
+  messaging().getToken()
+  .then(fcmToken => {
+    if (fcmToken) {
+      console.log(fcmToken)
+    } else {
+      console.log("fcmToken yok")
+    } 
+  });*/
+  /*
+  
+  };*//*
+
+  const functions = require('firebase-admin').functions();
+const admin = require('firebase-admin');
+
+admin.initializeApp();
+
+exports.sendAppointmentDeletionNotification = functions.firestore
+  .document('appointments/{appointmentId}')
+  .onDelete(async (snapshot, context) => {
+    const appointmentData = snapshot.data();
+    const patientId = appointmentData.patientId; // Assuming you have a patientId field
+
+    // Get the patient's device token (implement logic to retrieve it)
+    const patientDeviceToken = await getPatientDeviceToken(patientId);
+
+    if (!patientDeviceToken) {
+      console.warn('Patient device token not found:', patientId);
+      return;
+    }
+
+    const message = {
+      notification: {
+        title: 'Randevunuz Silindi',
+        body: `Dr. ${appointmentData.doktorDisplayName} ile olan randevunuz iptal edildi.`,
+      },
+      token: patientDeviceToken,
+    };
+
+    // Send the notification using Firebase Cloud Messaging (FCM)
+    admin.messaging().send(message)
+      .then((response) => {
+        console.log('Notification sent successfully:', response);
+      })
+      .catch((error) => {
+        console.error('Error sending notification:', error);
+      });
+  });
+
+// Replace this with your logic to retrieve the patient's device token
+async function getPatientDeviceToken(patientId) {
+  // Implement logic to fetch the device token from your database or user profile
+  // based on the patientId
+  return 'YOUR_PLACEHOLDER_DEVICE_TOKEN'; // Replace with actual logic
+}
+
+    useEffect(() => {
+  
+      const getToken = async () => {
+        console.log("gettoken")
+        const token = (await Notifications.getDevicePushTokenAsync()).data;
+    
+        //const token = await firebase.messaging().getToken();
+        console.log(token)
+        saveTokenToDatabase(token);
+      };
+      getToken()
+  }, []);*/
+
+  useEffect(() => {
+    async function getToken () {
+      const token = (await Notifications.getDevicePushTokenAsync()).data;
+      console.log(token);
+      console.log("token");
+
+      saveTokenToDatabase(token);
+    };
+    return() => getToken();
+  }, []);
 
   async function fetchData(user){
     console.log(auth.currentUser.uid)

@@ -35,7 +35,7 @@ export default function DoctorAppointmentsScreen() {
         querySnapshot.forEach((doc) => {
           appointmentsData.push({ ...doc.data(), id: doc.id }); // Belge verilerini ve belge ID'sini ekleyin
         });
-        setAppointments(appointmentsData);
+        setAppointments(appointmentsData.sort((a, b) => new Date(a.time) - new Date(b.time)).reverse());
       };
       fetchAppointments();
     }, [])
@@ -76,6 +76,8 @@ export default function DoctorAppointmentsScreen() {
               );
               setAppointments(updatedAppointments);
               console.log("Randevu silindi:", appointmentId);
+              await sendAppointmentDeletionNotification({ appointmentId });  // Pass appointmentId as an argument
+
             } catch (error) {
               console.error("Randevu silme hatası:", error);
               Alert.alert("Hata", "Randevu silinemedi!");

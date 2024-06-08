@@ -37,7 +37,7 @@ async function handlePress(){
         ,color:"blue" ,backgroundColor:colors.white, 
          textAlign : "center", fontFamily:"Roboto"}}>
 
-           <TouchableOpacity title="doktor"
+           {/*<TouchableOpacity title="doktor"
       onPress={() => navigation.navigate("Doktor Girişi")}
       style={{
         position: "absolute",
@@ -53,7 +53,7 @@ async function handlePress(){
         justifyContent: "center",
       }}
     ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
-   
+    */}
 
    <Image
         style={{ resizeMode:'contain',width:434,height:400, alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} 
