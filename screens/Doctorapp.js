@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRoute } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
+//import QeRCode from 'qrcode';
+import QRCode from 'react-native-qrcode-svg';
+
+
 import {
   View,
-  Text,
+  Text,Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -13,9 +18,19 @@ import { collection, query, where, getDocs, addDoc, Timestamp } from 'firebase/f
 export default function Doctorapp() {
   const route = useRoute();
   const userB = route.params.user;
+
+  const [qrValue, setQrValue] = useState('');
+
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [upcomingDays, setUpcomingDays] = useState(getUpcomingDays());
+  const [region, setRegion] = useState({
+    latitude: 39.78825,
+    longitude: 36.4324,
+    latitudeDelta: 8,
+    longitudeDelta: 8,
+  });
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -35,9 +50,64 @@ export default function Doctorapp() {
       setAppointments(appointmentsData);
     };
     fetchAppointments();
+    
+   fetchData() 
   }, [selectedDate]);
+
+
+  async function fetchData() {
+    const q = query(
+      collection(db, "users"),
+      where("email", "==",userB.email)
+     
+    );
+    const querySnapshot = await getDocs(q);
+    console.log("querySnapshot")
+
+    console.log(querySnapshot.docs)
+    const appointmentsData = [];
+    querySnapshot.forEach((doc) => {
+      appointmentsData.push(doc.data());
+
+
+      console.log(doc.data())
+    });
+    console.log("appointmentsData")
+
+    console.log(appointmentsData[0].region)
+    setRegion(appointmentsData[0].region)
+  }
+
   console.log("userb doktor")
   console.log(userB)
+
+  //%&%&%&%&%%&%&%&%&%%&%&%&%&%---------QR-------------%&%&%&%&%&%&%&%&%&%&%&%&%&%%&
+ /* useEffect(() => {
+    const generateQrCode = async () => {
+      try {
+        const url = `doctorapp://doctor/${userB}`;
+        const qr = await QRCode.toDataURL(url);
+        setQrCode(qr);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    generateQrCode();
+  }, [userB.email]);*/
+
+
+
+  useEffect(() => {
+    const userDetails = {
+      displayName: userB.displayName,
+      email: userB.email,
+      userType: userB.userType,
+      uzmanlik: userB.uzmanlik,
+    };
+    setQrValue(`doctorapp://${encodeURIComponent(JSON.stringify(userDetails))}`);
+  }, [userB]);
+
+//-----------------------------------------
   const handleTimeSelect = async (hour, minute) => {
     console.log("minute")
     console.log(minute)
@@ -52,6 +122,8 @@ export default function Doctorapp() {
       doktordisplayName:userB.displayName,
       doctorId: "xWLtqtFHjqa2Z7LS2e5KtpRH5Vg1",
       patientId: auth.currentUser.uid,
+      patientEmail: auth.currentUser.email,
+      patientdisplayName: auth.currentUser.displayName,
       date: selectedDate.toDateString(),
       time: appointmentTime.toISOString(),
       bookedAt: Timestamp.now(),
@@ -60,7 +132,9 @@ export default function Doctorapp() {
     await addDoc(collection(db, "appointments"), appointmentData);
     
     console.log('Randevu eklendi:', appointmentData);
+    
   };
+  
   const renderAppointmentTimes = () => {
     const times = [];
     const bookedTimes = appointments.map(app => {
@@ -114,6 +188,11 @@ export default function Doctorapp() {
       <View style={styles.container}>
         <Text style={styles.title}>{userB.displayName}</Text>
         <Text style={styles.subtitle}>{userB.uzmanlik}</Text>
+        {qrValue ? <QRCode value={qrValue} size={200} /> : <Text>Loading...</Text>}
+       
+        <MapView style={styles.map} region={region}>
+            <Marker coordinate={region} title={"Doktor Kliniği"} />
+          </MapView>
         <View style={styles.datesContainer}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {upcomingDays.map((day) => (
@@ -144,6 +223,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+  }, qrCode: {
+    width: 200,
+    height: 200,
   },
   subtitle: {
     fontSize: 16,
@@ -177,6 +259,12 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color:"#000000"
+  },map: {
+    borderRadius: 4,
+    width: 300,
+    height: 200,
+    margin: 20,
+    borderWidth: 2,
   },
   timeButton: {
     margin: 5,

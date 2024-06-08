@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+
 import { updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import  {getStorage} from "firebase/storage"
@@ -53,3 +54,4 @@ export function signUp(email, password, userType) {
     });
   });
 }
+

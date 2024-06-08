@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Button } from 'react-native'
+import { View, Text, TouchableOpacity,StyleSheet, Button } from 'react-native'
 import React, { useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import GlobalContext from '../context/Context'
@@ -13,6 +13,7 @@ export default function ListItem({
   ,type
   ,style
 }) {
+ // const [Time , setTime]= time
   const navigation = useNavigation()
   console.log("listitem user")
   console.log(user)
@@ -35,7 +36,13 @@ export default function ListItem({
         <Row style={{alignItems:"center"}}>
             <Col>
             <Text>
-                {user.contactName || user.displayName }
+                { user.displayName }
+            </Text>
+            <Text style={styles.lastmassege}>
+                { description }
+            </Text>
+            <Text style={styles.lastmassege}>
+                { time? time.toDate().toLocaleDateString() +" \n"+ time.toDate().toLocaleTimeString():""}
             </Text>
             </Col>
 
@@ -44,7 +51,7 @@ export default function ListItem({
       </Grid>
     </TouchableOpacity>
     {user.userType === 'doctor' && (
-         <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user,room,image})}>
+         <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user})}>
          <Text style={{ color: "white", textAlign: "center" }}>Randevu Al</Text>
        </TouchableOpacity> 
       )}
@@ -52,3 +59,20 @@ export default function ListItem({
      </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 5,
+    paddingRight: 10,
+    
+  }, emptyListText: {
+    textAlign: "center",
+    alignContent:"center",
+    textAlignVertical:"center"
+  },lastmassege:{
+    fontSize:12,
+    color:"#9B9B9B",
+    
+  }
+});

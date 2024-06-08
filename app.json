@@ -9,8 +9,7 @@
     "splash": {
       "image": "./assets/health-care.png",
       "resizeMode": "center",
-      "width": 50,
-      "height":50,
+   
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],

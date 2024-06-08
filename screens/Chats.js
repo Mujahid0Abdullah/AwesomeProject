@@ -42,7 +42,18 @@ export default function Chats() {
           .participants.find((p) => p.email !== currentUser.email),
       }));
       setUnfilteredRooms(parsedChats);
-      setRooms(parsedChats.filter((doc) => doc.lastMessage));
+
+      const filteredChats = parsedChats.filter((doc) => doc.lastMessage)
+      const sortedChats = filteredChats.sort((a, b) => {
+        const dateA = a.lastMessage.createdAt?.toDate();
+        const dateB = b.lastMessage.createdAt?.toDate();
+        if (dateA && dateB) {
+          return dateB - dateA;
+        } return 0;
+      });
+
+      setRooms(sortedChats)
+      console.log(sortedChats)
     });
     return () => unsubscribe();
   }, []);
@@ -50,7 +61,10 @@ export default function Chats() {
   function getUserB(user, contacts) {
     const userContact = contacts.find((c) => c.email === user.email);
     if (userContact && userContact.displayName) {
-      return { ...user, contactName: userContact.displayName ,uzmanlik :userContact.uzmanlik , userType:userContact.userType};
+      console.log("userin getuserb")
+
+      console.log(user)
+      return { ...user ,uzmanlik :userContact.uzmanlik , userType:userContact.userType};
     }
     console.log(" user ")
     console.log(user)
@@ -59,7 +73,10 @@ export default function Chats() {
   return(
 
     <View style={styles.container}>
-    <FlatList style={{paddingBottom: 80}}
+    <FlatList style={{paddingBottom: 80}} 
+    ListEmptyComponent={() => (
+            <Text style={styles.emptyListText}>Henüz Chat'larınız yok.</Text>
+          )}
       data={rooms}
       keyExtractor={(item) => item.id.toString()} // Ensure unique key for each item
       renderItem={({ item }) => (
@@ -102,5 +119,9 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingRight: 10,
     
+  }, emptyListText: {
+    textAlign: "center",
+    alignContent:"center",
+    textAlignVertical:"center"
   },
 });

@@ -61,7 +61,6 @@ querySnapshot.forEach((doc) => {
 
 function ContactPreview({contact,image}){
     const {unfilteredRooms, rooms}=  useContext(GlobalContext)
-
     const [user,setUser]= useState(contact)
     useEffect(()=>{
         const q= query(

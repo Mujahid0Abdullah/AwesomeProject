@@ -13,8 +13,7 @@ export async function askForPermission() {
 }
 
 export async function uploadImage(uri, path, fName) {
-  // Why are we using XMLHttpRequest? See:
-  // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {

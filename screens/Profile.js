@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import {
   Image,
   Button,
@@ -9,18 +9,18 @@ import {
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { useRoute, useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
 import { StyleSheet } from "react-native";
 import { auth, db } from "../firebase.js";
 import { pickImage, askForPermission, uploadImage } from "../utils.js";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
 import Context from "../context/Context";
 import { updateProfile } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-
 import { useNavigation } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
+import Geocoder from "react-native-geocoding";
 
 export default function Profile() {
   const {
@@ -33,6 +33,12 @@ export default function Profile() {
   const [unvan, setUnvan] = useState(""); // New field for title
   const [selectedImage, setSelectedImage] = useState(null);
   const [permissionStatus, setPermissionStatus] = useState(null);
+  const [region, setRegion] = useState({
+    latitude: 37.78825,
+    longitude: 25.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -56,7 +62,6 @@ export default function Profile() {
       setUzmanlik(docSnap.data().uzmanlik ? docSnap.data().uzmanlik : ""); // Set uzmanlik if present
       setHastane(docSnap.data().hastane ? docSnap.data().hastane : ""); // Set hastane if present
       setUnvan(docSnap.data().unvan ? docSnap.data().unvan : ""); // Set unvan if present
-      //setUse(docSnap.data());
       data = docSnap.data();
       collectionData = docSnap.data();
       console.log("data is :", data);
@@ -71,7 +76,7 @@ export default function Profile() {
       fetchData();
     }, [])
   );
-
+  //-----------------------GÜNCELLEME BUTUNU ----------
   async function handlePress() {
     const user = auth.currentUser;
     let photoURL;
@@ -91,6 +96,7 @@ export default function Profile() {
       uzmanlik,
       hastane,
       unvan, // Include new fields
+      region
     };
     console.log(userData);
     if (photoURL) {
@@ -101,16 +107,84 @@ export default function Profile() {
       setDoc(doc(db, "users", user.uid), { ...userData, uid: user.uid }),
     ]);
     navigation.navigate("home");
+    // return userData
   }
+  /*
+  useEffect(() => {
+    async function navigateToHome() {
+      const updatedUserData = await handlePress();
+      if (updatedUserData) {
+        navigation.navigate("home");
+      }
+    }
+  
+    navigateToHome();
+  }, []);*/
 
+  //-------------Kullanıcı Fotoğrafı--------------
   async function handleProfilePicture() {
     const result = await pickImage();
-
     console.log("ddd+" + result.assets.uri);
     if (!result.cancelled) {
       setSelectedImage(result.assets[0].uri);
     }
   }
+
+  //----------------adress konum'a çevirmek((GOOGLE CLOUD))---------------
+  Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your API key
+
+  const handleGeocode = async () => {
+    if (unvan) {
+      try {
+        const json = await Geocoder.from(unvan);
+        console.log(json);
+
+        const location = json.results[0].geometry.location;
+        console.log(location);
+        setRegion({
+          ...region,
+          latitude: location.lat,
+          longitude: location.lng,
+        });
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+  };
+
+  //----------------adress konum'a çevirmek---------------
+  const fetchLocation = async () => {
+    const address = unvan;
+    const apiKey = "ad3f44663bd2419babe81e5702defe8f";
+    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+      address
+    )}&apiKey=${apiKey}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.features) {
+        const result = data.features[0];
+        setRegion({
+          // formatted: result.formatted,
+          // lat: result.lat,
+          //lon: result.lon,
+          latitude: result.geometry.coordinates[1],
+          longitude: result.geometry.coordinates[0],
+        });
+        console.log("reagon");
+        console.log(region);
+      } else {
+        console.error("No results found.");
+      }
+    } catch (error) {
+      console.error("Error fetching location:", error);
+    }
+  };
+  useEffect(() => {
+    //handleGeocode();
+    fetchLocation();
+  }, [unvan]);
 
   const user1 = auth.currentUser;
   const img1 = user1.photoURL;
@@ -152,6 +226,8 @@ export default function Profile() {
           </TouchableOpacity>
           <Text>{displayName}</Text>
           <Text>{uzmanlik}</Text>
+          <Text style={styles.textInfo2}>ad</Text>
+
           {/* Ad Soyad Input */}
           <TextInput
             placeholder="Adınız ve Soyadınız"
@@ -160,6 +236,8 @@ export default function Profile() {
             style={styles.Input}
           />
 
+          <Text style={styles.textInfo2}>Uzmanlık</Text>
+
           {/* Uzmanlık Input */}
           <TextInput
             placeholder="Uzmanlık Alanınız"
@@ -167,6 +245,7 @@ export default function Profile() {
             onChangeText={setUzmanlik}
             style={styles.Input}
           />
+          <Text style={styles.textInfo2}>Hastane/Klinik adı</Text>
 
           {/* Hastane Input */}
           <TextInput
@@ -175,14 +254,21 @@ export default function Profile() {
             onChangeText={setHastane}
             style={styles.Input}
           />
+          <Text style={styles.textInfo2}>Adres</Text>
 
-          {/* Ünvan Input */}
+          {/* Adres Input */}
           <TextInput
             placeholder="Ünvanınız"
             value={unvan}
             onChangeText={setUnvan}
             style={styles.Input}
           />
+
+          {/* Map View  <Marker coordinate={region} title={unvan} />*/}
+          {/* Map View */}
+          <MapView style={styles.map} region={region}>
+            <Marker coordinate={region} title={unvan} />
+          </MapView>
 
           {/* Güncelle Butonu */}
           <Button
@@ -221,7 +307,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   Input: {
-    marginTop: 20,
+    marginTop: 2,
     borderBottomColor: "#92cbdf",
     marginBottom: 20,
     width: 300,
@@ -230,7 +316,12 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderWidth: 2,
     height: 55,
-    //borderColor: "#757575",
-    curve: "circular",
+  },
+  map: {
+    borderRadius: 4,
+    width: 300,
+    height: 200,
+    margin: 20,
+    borderWidth: 2,
   },
 });
