@@ -22,7 +22,6 @@ import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
 import Geocoder from "react-native-geocoding";
 
-
 export default function Profile() {
   const {
     theme: { colors },
@@ -77,7 +76,7 @@ export default function Profile() {
       fetchData();
     }, [])
   );
-//-----------------------GÜNCELLEME BUTUNU ----------
+  //-----------------------GÜNCELLEME BUTUNU ----------
   async function handlePress() {
     const user = auth.currentUser;
     let photoURL;
@@ -97,6 +96,7 @@ export default function Profile() {
       uzmanlik,
       hastane,
       unvan, // Include new fields
+      region
     };
     console.log(userData);
     if (photoURL) {
@@ -106,10 +106,10 @@ export default function Profile() {
       updateProfile(user, userData),
       setDoc(doc(db, "users", user.uid), { ...userData, uid: user.uid }),
     ]);
-   navigation.navigate("home");
-   // return userData
+    navigation.navigate("home");
+    // return userData
   }
-/*
+  /*
   useEffect(() => {
     async function navigateToHome() {
       const updatedUserData = await handlePress();
@@ -120,8 +120,8 @@ export default function Profile() {
   
     navigateToHome();
   }, []);*/
-  
-//-------------Kullanıcı Fotoğrafı--------------
+
+  //-------------Kullanıcı Fotoğrafı--------------
   async function handleProfilePicture() {
     const result = await pickImage();
     console.log("ddd+" + result.assets.uri);
@@ -130,18 +130,17 @@ export default function Profile() {
     }
   }
 
-
-//----------------adress konum'a çevirmek((GOOGLE CLOUD))---------------
-Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your API key
+  //----------------adress konum'a çevirmek((GOOGLE CLOUD))---------------
+  Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your API key
 
   const handleGeocode = async () => {
     if (unvan) {
       try {
         const json = await Geocoder.from(unvan);
-        console.log(json)
+        console.log(json);
 
         const location = json.results[0].geometry.location;
-        console.log(location)
+        console.log(location);
         setRegion({
           ...region,
           latitude: location.lat,
@@ -153,11 +152,13 @@ Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your A
     }
   };
 
-//----------------adress konum'a çevirmek---------------
+  //----------------adress konum'a çevirmek---------------
   const fetchLocation = async () => {
     const address = unvan;
     const apiKey = "ad3f44663bd2419babe81e5702defe8f";
-    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${apiKey}`;
+    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+      address
+    )}&apiKey=${apiKey}`;
 
     try {
       const response = await fetch(url);
@@ -165,21 +166,21 @@ Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your A
       if (data.features) {
         const result = data.features[0];
         setRegion({
-         // formatted: result.formatted,
-         // lat: result.lat,
+          // formatted: result.formatted,
+          // lat: result.lat,
           //lon: result.lon,
           latitude: result.geometry.coordinates[1],
           longitude: result.geometry.coordinates[0],
         });
-        console.log("reagon")
-        console.log(region)
+        console.log("reagon");
+        console.log(region);
       } else {
         console.error("No results found.");
       }
     } catch (error) {
       console.error("Error fetching location:", error);
     }
-  }
+  };
   useEffect(() => {
     //handleGeocode();
     fetchLocation();
@@ -264,13 +265,10 @@ Geocoder.init("AIzaSyAkMkFa1ErOqmxfz7bCoocJ6mrcVfNHryA"); // Replace with your A
           />
 
           {/* Map View  <Marker coordinate={region} title={unvan} />*/}
-         {/* Map View */}
-         <MapView style={styles.map} region={region}>
+          {/* Map View */}
+          <MapView style={styles.map} region={region}>
             <Marker coordinate={region} title={unvan} />
           </MapView>
-
-           
-         
 
           {/* Güncelle Butonu */}
           <Button
@@ -307,7 +305,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
     color: "#000000",
-    
   },
   Input: {
     marginTop: 2,
@@ -321,9 +318,10 @@ const styles = StyleSheet.create({
     height: 55,
   },
   map: {
-    borderRadius:4,
+    borderRadius: 4,
     width: 300,
     height: 200,
-    margin: 20,borderWidth: 2,
+    margin: 20,
+    borderWidth: 2,
   },
 });

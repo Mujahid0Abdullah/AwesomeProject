@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRoute } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
 import {
   View,
   Text,
@@ -16,6 +17,12 @@ export default function Doctorapp() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [upcomingDays, setUpcomingDays] = useState(getUpcomingDays());
+  const [region, setRegion] = useState({
+    latitude: 39.78825,
+    longitude: 36.4324,
+    latitudeDelta: 8,
+    longitudeDelta: 8,
+  });
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -35,8 +42,33 @@ export default function Doctorapp() {
       setAppointments(appointmentsData);
     };
     fetchAppointments();
+    
+   fetchData() 
   }, [selectedDate]);
 
+
+  async function fetchData() {
+    const q = query(
+      collection(db, "users"),
+      where("email", "==",userB.email)
+     
+    );
+    const querySnapshot = await getDocs(q);
+    console.log("querySnapshot")
+
+    console.log(querySnapshot.docs)
+    const appointmentsData = [];
+    querySnapshot.forEach((doc) => {
+      appointmentsData.push(doc.data());
+
+
+      console.log(doc.data())
+    });
+    console.log("appointmentsData")
+
+    console.log(appointmentsData[0].region)
+    setRegion(appointmentsData[0].region)
+  }
 
   console.log("userb doktor")
   console.log(userB)
@@ -122,6 +154,10 @@ export default function Doctorapp() {
       <View style={styles.container}>
         <Text style={styles.title}>{userB.displayName}</Text>
         <Text style={styles.subtitle}>{userB.uzmanlik}</Text>
+        <Text style={styles.subtitle}>{region[0]}</Text>
+        <MapView style={styles.map} region={region}>
+            <Marker coordinate={region} title={"Doktor Kliniği"} />
+          </MapView>
         <View style={styles.datesContainer}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {upcomingDays.map((day) => (
@@ -185,6 +221,12 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color:"#000000"
+  },map: {
+    borderRadius: 4,
+    width: 300,
+    height: 200,
+    margin: 20,
+    borderWidth: 2,
   },
   timeButton: {
     margin: 5,
