@@ -121,22 +121,33 @@ export default function DoctorAppointmentsScreen() {
       </TouchableOpacity>
     </View>
   );*/
-  const renderAppointment = ({ item }) => (
-    <TouchableOpacity style={styles.appointmentItem} onPress={() => setModalVisible(false)}>
-      <View style={styles.appointmentDetails}>
-        <Text style={styles.appointmentTextName}>{item.patientdisplayName}</Text>
-        <Text style={styles.appointmentTextDate}>{item.date}</Text>
-        <View>
-        <Text >Hastanın Bilgileri:</Text>
-        <Text style={styles.appointmentTextDate}>{item.patientEmail}</Text>
+  const renderAppointment = ({ item }) => {
+    // item.time değerini Date objesine dönüştür
+    const appointmentTime = new Date(item.time);
+  
+    // 3 saat ekle
+    appointmentTime.setHours(appointmentTime.getHours() + 3);
+  
+    // Yeni zamanı saat: dakika formatında al
+    const formattedTime = appointmentTime.toISOString().split('T')[1].slice(0, 5);
+  
+    return (
+      <TouchableOpacity style={styles.appointmentItem} onPress={() => setModalVisible(false)}>
+        <View style={styles.appointmentDetails}>
+          <Text style={styles.appointmentTextName}>{item.patientdisplayName}</Text>
+          <Text style={styles.appointmentTextDate}>{item.date}</Text>
+          <View>
+            <Text>Hastanın Bilgileri:</Text>
+            <Text style={styles.appointmentTextDate}>{item.patientEmail}</Text>
+          </View>
         </View>
-      </View>
-      <Text style={styles.appointmentTextTime}>{item.time.split('T')[1].slice(0, 5)}</Text>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteAppointment(item.id)}>
-        <Text style={styles.deleteButtonText}>Sil</Text>
+        <Text style={styles.appointmentTextTime}>{formattedTime}</Text>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteAppointment(item.id)}>
+          <Text style={styles.deleteButtonText}>Sil</Text>
+        </TouchableOpacity>
       </TouchableOpacity>
-    </TouchableOpacity>
-  );
+    );
+  };
   
   
 

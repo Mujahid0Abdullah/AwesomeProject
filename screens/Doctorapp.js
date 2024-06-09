@@ -90,6 +90,7 @@ export default function DoctorApp() {
       time: appointmentTime.toISOString(),
       bookedAt: Timestamp.now(),
     };
+    console.log(appointmentData)
   
     Alert.alert(
       "Randevu Onayı",

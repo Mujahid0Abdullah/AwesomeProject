@@ -93,6 +93,9 @@ export default function Profile() {
       userType: userType,
       uzmanlik: uzmanlik,
     };
+    console.log("userDetails")
+
+  console.log(userDetails)
     setQrValue(`doctorapp://${encodeURIComponent(JSON.stringify(userDetails))}`);
   }, [displayName]);
   //-----------------------GÜNCELLEME BUTUNU ----------
