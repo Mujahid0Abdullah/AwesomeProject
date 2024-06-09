@@ -19,7 +19,7 @@ export default function ListItem({
   console.log(user)
   const {theme: {color}}= useContext(GlobalContext)
     return (
-      <View style={{backgroundColor:"#ffffff",marginBottom:9,marginTop:9,borderRadius:19 ,marginBottom:4 , shadowColor: "black",
+      <View style={{backgroundColor:"#ffffff",marginBottom:9,marginTop:9,borderRadius:19,marginLeft:4,marginRight:4 ,marginBottom:4 , shadowColor: "black",
   shadowOffset: { width: 0, height: 2 }, // Gölge boyutu ve yönü
   shadowOpacity: 0.25, // Gölge opaklığı
   shadowRadius: 4, // Gölge yayılımı
@@ -30,15 +30,16 @@ export default function ListItem({
     
       <Grid style={{maxHeight:80}}>
         <Col style={{width:80, alignItems: "center" , justifyContent: "center"}}>
-            <Avatar user={user}  size={type === "contacts"? 40:65 }  />
+            <Avatar user={user}  size={65 }  />
         </Col>
         <Col style={{marginLeft:10}}>
         <Row style={{alignItems:"center"}}>
             <Col>
             <Text>
-                { user.displayName }
+                { user.displayName+"  "+(user.uzmanlik?"("+user.uzmanlik+")":"") }
+
             </Text>
-            <Text style={styles.lastmassege}>
+            <Text style={styles.lastmassege} numberOfLines={1} >
                 { description }
             </Text>
             <Text style={styles.lastmassege}>
@@ -51,7 +52,7 @@ export default function ListItem({
       </Grid>
     </TouchableOpacity>
     {user.userType === 'doctor' && (
-         <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#1B0AE8", borderRadius: 3, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user})}>
+         <TouchableOpacity style={{height:23, width: 100, backgroundColor: "#D1584B", borderRadius: 13, alignSelf: "flex-end" ,margin:9}} onPress={()=>navigation.navigate("doktorapp",{user})}>
          <Text style={{ color: "white", textAlign: "center" }}>Randevu Al</Text>
        </TouchableOpacity> 
       )}

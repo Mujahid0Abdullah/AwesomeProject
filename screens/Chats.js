@@ -116,7 +116,7 @@ export default function Chats() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
+    padding: 10,
     paddingRight: 10,
     
   }, emptyListText: {

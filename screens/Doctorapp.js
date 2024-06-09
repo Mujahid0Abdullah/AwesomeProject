@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useRoute } from "@react-navigation/native";
 import MapView, { Marker } from "react-native-maps";
-//import QeRCode from 'qrcode';
 import QRCode from 'react-native-qrcode-svg';
-
-
 import {
   View,
-  Text,Image,
+  Text,
   StyleSheet,
   ScrollView,
+  Modal,
   TouchableOpacity,
+  Button,Alert
 } from 'react-native';
-import {auth, db} from "../firebase.js"
+import { auth, db } from "../firebase.js";
 import { collection, query, where, getDocs, addDoc, Timestamp } from 'firebase/firestore';
 
-export default function Doctorapp() {
+export default function DoctorApp() {
   const route = useRoute();
   const userB = route.params.user;
 
   const [qrValue, setQrValue] = useState('');
-
-
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
   const [upcomingDays, setUpcomingDays] = useState(getUpcomingDays());
@@ -33,69 +31,38 @@ export default function Doctorapp() {
   });
 
   useEffect(() => {
-    const fetchAppointments = async () => {
-      const q = query(
-        collection(db, "appointments"),
-        where("doktorEmail", "==",userB.email),
-        where("date", "==", selectedDate.toDateString())
-      );
-      const querySnapshot = await getDocs(q);
-      const appointmentsData = [];
-      querySnapshot.forEach((doc) => {
-        appointmentsData.push(doc.data());
-
-
-        console.log(doc.data())
-      });
-      setAppointments(appointmentsData);
-    };
     fetchAppointments();
-    
-   fetchData() 
   }, [selectedDate]);
 
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  async function fetchData() {
+  const fetchAppointments = async () => {
     const q = query(
-      collection(db, "users"),
-      where("email", "==",userB.email)
-     
+      collection(db, "appointments"),
+      where("doktorEmail", "==", userB.email),
+      where("date", "==", selectedDate.toDateString())
     );
     const querySnapshot = await getDocs(q);
-    console.log("querySnapshot")
-
-    console.log(querySnapshot.docs)
     const appointmentsData = [];
     querySnapshot.forEach((doc) => {
       appointmentsData.push(doc.data());
-
-
-      console.log(doc.data())
     });
-    console.log("appointmentsData")
+    setAppointments(appointmentsData);
+  };
 
-    console.log(appointmentsData[0].region)
-    setRegion(appointmentsData[0].region)
-  }
-
-  console.log("userb doktor")
-  console.log(userB)
-
-  //%&%&%&%&%%&%&%&%&%%&%&%&%&%---------QR-------------%&%&%&%&%&%&%&%&%&%&%&%&%&%%&
- /* useEffect(() => {
-    const generateQrCode = async () => {
-      try {
-        const url = `doctorapp://doctor/${userB}`;
-        const qr = await QRCode.toDataURL(url);
-        setQrCode(qr);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    generateQrCode();
-  }, [userB.email]);*/
-
-
+  const fetchData = async () => {
+    const q = query(
+      collection(db, "users"),
+      where("email", "==", userB.email)
+    );
+    const querySnapshot = await getDocs(q);
+    const userData = querySnapshot.docs.map(doc => doc.data())[0];
+    if (userData && userData.region) {
+      setRegion(userData.region);
+    }
+  };
 
   useEffect(() => {
     const userDetails = {
@@ -104,22 +71,17 @@ export default function Doctorapp() {
       userType: userB.userType,
       uzmanlik: userB.uzmanlik,
     };
-    setQrValue(`doctorapp://${encodeURIComponent(JSON.stringify(userDetails))}`);
+    setQrValue(`doctorapp://${ encodeURIComponent(JSON.stringify(userDetails))}`);
   }, [userB]);
 
-//-----------------------------------------
   const handleTimeSelect = async (hour, minute) => {
-    console.log("minute")
-    console.log(minute)
     const appointmentTime = new Date(selectedDate);
     appointmentTime.setHours(hour);
     appointmentTime.setMinutes(minute);
-    console.log(appointmentTime.toISOString())
-
+  
     const appointmentData = {
       doktorEmail: userB.email,
-      //doctor id nonuseble
-      doktordisplayName:userB.displayName,
+      doktordisplayName: userB.displayName,
       doctorId: "xWLtqtFHjqa2Z7LS2e5KtpRH5Vg1",
       patientId: auth.currentUser.uid,
       patientEmail: auth.currentUser.email,
@@ -128,13 +90,29 @@ export default function Doctorapp() {
       time: appointmentTime.toISOString(),
       bookedAt: Timestamp.now(),
     };
-
-    await addDoc(collection(db, "appointments"), appointmentData);
-    
-    console.log('Randevu eklendi:', appointmentData);
-    
-  };
+    console.log(appointmentData)
   
+    Alert.alert(
+      "Randevu Onayı",
+    `Randevunuzu "${appointmentTime.toLocaleDateString('tr-TR', { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' })}" tarihinde saat ${appointmentTime.getHours()}:${appointmentTime.getMinutes()}'de almak istediğinizden emin misiniz?`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Appointment cancelled"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            await addDoc(collection(db, "appointments"), appointmentData);
+            fetchAppointments();  // Re-fetch appointments to update the UI
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const renderAppointmentTimes = () => {
     const times = [];
     const bookedTimes = appointments.map(app => {
@@ -143,7 +121,7 @@ export default function Doctorapp() {
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
     });
-  
+
     for (let i = 8; i < 17; i++) {
       for (let j = 0; j < 2; j++) {
         const hour = i + Math.floor(j * 0.5);
@@ -151,7 +129,7 @@ export default function Doctorapp() {
         const timeString = `${hour < 10 ? '0' + hour : hour}:${minute}`;
         const isBooked = bookedTimes.some(bookedTime => bookedTime === timeString);
         const buttonStyle = isBooked ? styles.bookedTime : styles.availableTime;
-  
+
         times.push(
           <TouchableOpacity
             key={`${hour}-${minute}`}
@@ -167,10 +145,9 @@ export default function Doctorapp() {
     return times;
   };
 
- function getUpcomingDays () {
+  function getUpcomingDays ()  {
     const today = new Date();
     const upcomingDays = [];
-
     for (let i = 0; i < 7; i++) {
       const upcomingDate = new Date(today.getTime() + (i * 24 * 60 * 60 * 1000));
       const dayString = upcomingDate.toLocaleDateString('tr-TR', { weekday: 'short', year: 'numeric', month: 'numeric', day: 'numeric' });
@@ -188,11 +165,12 @@ export default function Doctorapp() {
       <View style={styles.container}>
         <Text style={styles.title}>{userB.displayName}</Text>
         <Text style={styles.subtitle}>{userB.uzmanlik}</Text>
-        {qrValue ? <QRCode value={qrValue} size={200} /> : <Text>Loading...</Text>}
-       
+        <TouchableOpacity style={[styles.button, styles.buttonOpen]} onPress={() => setModalVisible(true)}>
+          <Text style={styles.buttonText}>QR</Text>
+        </TouchableOpacity>
         <MapView style={styles.map} region={region}>
-            <Marker coordinate={region} title={"Doktor Kliniği"} />
-          </MapView>
+          <Marker coordinate={region} title={"Doktor Kliniği"} />
+        </MapView>
         <View style={styles.datesContainer}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {upcomingDays.map((day) => (
@@ -200,7 +178,6 @@ export default function Doctorapp() {
                 key={day.date.toString()}
                 onPress={() => handleDateSelect(day)}
                 style={day.date.toDateString() === selectedDate.toDateString() ? styles.selectedDateButton : styles.dateButton}
-                //disabled={day.date < new Date()}
               >
                 <Text style={styles.dateText}>{day.dayString}</Text>
               </TouchableOpacity>
@@ -210,6 +187,18 @@ export default function Doctorapp() {
         <View style={styles.appointmentTimes}>
           {renderAppointmentTimes()}
         </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(!modalVisible)}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>QR Code</Text>
+            {qrValue ? <QRCode value={qrValue} size={200} /> : <Text>Loading...</Text>}
+            <Button title="Close" onPress={() => setModalVisible(false)} />
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -218,12 +207,27 @@ export default function Doctorapp() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    alignItems: 'center',
+  },
+  buttonOpen: {
+    backgroundColor: '#34b7f1',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-  }, qrCode: {
+  },
+  qrCode: {
     width: 200,
     height: 200,
   },
@@ -245,21 +249,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#007BFF',
-
   },
   selectedDateButton: {
     margin: 10,
-    width: 75,
+    width: 85,
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
+    paddingRight: 3,
+    paddingLeft: 3,
     backgroundColor: '#007BFF',
-  
   },
   dateText: {
-    color:"#000000"
-  },map: {
+    color: "#000000",
+  },
+  map: {
     borderRadius: 4,
     width: 300,
     height: 200,
@@ -284,5 +289,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
   },
 });

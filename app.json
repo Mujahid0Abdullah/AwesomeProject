@@ -7,8 +7,8 @@
     "icon": "./assets/health-care.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/health-care.png",
-      "resizeMode": "center",
+      "image": "./assets/image.png",
+      "resizeMode": "cover",
    
       "backgroundColor": "#ffffff"
     },

@@ -6,8 +6,11 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,Switch
+  ScrollView,Switch,
+  Pressable
 } from "react-native";
+import useFonts from '../hooks/useFonts.js';
+
 import { StatusBar } from "expo-status-bar";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
@@ -41,7 +44,10 @@ export default function Profile() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [permissionStatus, setPermissionStatus] = useState(null);
   const navigation = useNavigation();
-
+  const fontsLoaded = useFonts({
+    'HelveticaNeue-Bold': require('../assets/fonts/HelveticaNeue-Bold.ttf'),
+    'HelveticaNeue-Medium': require('../assets/fonts/bs.ttf'),
+  });
   useEffect(() => {
     (async () => {
       const status = await askForPermission();
@@ -109,6 +115,8 @@ export default function Profile() {
       setAge(docSnap.data().age ? docSnap.data().age : ""); // Set age if present
       setTelefonNo(docSnap.data().telefonNo ? docSnap.data().telefonNo : ""); // Set telefonNo if present
       setDesc(docSnap.data().desc ? docSnap.data().desc : ""); // Set desc if present
+      setKilo(docSnap.data().kilo ? docSnap.data().kilo : ""); // Set desc if present
+
       //setUse(docSnap.data());
       data = docSnap.data();
       collectionData = docSnap.data();
@@ -207,8 +215,6 @@ export default function Profile() {
               />
             )}
           </TouchableOpacity>
-          <Text>{displayName}</Text>
-          <Text>{age}</Text>
           {/* Ad Soyad Input */}
           <TextInput
             placeholder="Adınız ve Soyadınız"
@@ -233,13 +239,13 @@ export default function Profile() {
             onChangeText={setKilo}
             style={styles.Input}
           />
-           <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
+           <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start',marginLeft:33}}>
           <Text >{userGen}</Text>
-          <Switch
+          <Switch 
       value={userGen === "Erkek"}
       onValueChange={(newValue) => setUserGen(newValue? "Erkek" : "Kadın")}
       thumbColor={colors.button} // Set the thumb color to the button color
-      trackColor={{ true: colors.button, false: colors.button }} // Set the track color to the button color
+      trackColor={{ true: colors.primary, false: colors.button }} // Set the track color to the button color
     />
     </View>
          <Text style={styles.textInfo2} >Telefon No</Text>
@@ -262,13 +268,13 @@ export default function Profile() {
           />
 
           {/* Güncelle Butonu */}
-          <Button
-            title="Güncelle"
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
             color={colors.button}
-            style={{ width: 300, marginTop: 20 }}
+           
             onPress={handlePress}
             disabled={!displayName || !age || !telefonNo || !desc}
-          />
+          ><Text style={{color:"white"}}>Güncelle</Text></Pressable>
         </View>
       </ScrollView>
     </React.Fragment>
@@ -290,19 +296,21 @@ const styles = StyleSheet.create({
   textInfo: {
     fontSize: 22,
     color: "#3395ff",
+    fontFamily: 'HelveticaNeue-Bold',
+    letterSpacing: 0.5,
   },
-
   textInfo2: {
     fontSize: 14,
     marginTop: 10,
-    marginLeft:28,
+    marginLeft: 28,
     color: "#000000",
-    
-    alignSelf:"flex-start"
+    //fontFamily: 'HelveticaNeue-Medium',
+    alignSelf: "flex-start",
+    letterSpacing: 0.3,
   },
   Input: {
     marginTop: 2,
-    borderBottomColor: "#92cbdf",
+    borderBottomColor: "#D1584B",
     marginBottom: 20,
     width: 300,
     backgroundColor: "white",
@@ -312,5 +320,13 @@ const styles = StyleSheet.create({
     height: 55,
     //borderColor: "#757575",
     curve: "circular",
+  },button: {
+    borderRadius: 20,
+   padding: 10,
+    elevation: 2,   alignItems: 'center',
+
+  },
+  buttonOpen: {
+    backgroundColor: '#000',
   },
 });

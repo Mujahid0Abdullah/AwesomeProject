@@ -1,13 +1,15 @@
 import React, { useEffect, useContext, useState } from "react";
 import {
   Image,
-  Button,
+  Button,Pressable,
   TextInput,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import QRCode from 'react-native-qrcode-svg';
+
 import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import Constants from "expo-constants";
@@ -31,13 +33,17 @@ export default function Profile() {
   const [uzmanlik, setUzmanlik] = useState("");
   const [hastane, setHastane] = useState(""); // New field for hospital
   const [unvan, setUnvan] = useState(""); // New field for title
+  const [userType, setUserType] = useState("");
+  const [email, setEmail] = useState("");
+  const [qrValue, setQrValue] = useState('');
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [permissionStatus, setPermissionStatus] = useState(null);
   const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: 25.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: 39.78825,
+    longitude: 36.4324,
+    latitudeDelta: 8,
+    longitudeDelta: 8,
   });
   const navigation = useNavigation();
 
@@ -62,6 +68,8 @@ export default function Profile() {
       setUzmanlik(docSnap.data().uzmanlik ? docSnap.data().uzmanlik : ""); // Set uzmanlik if present
       setHastane(docSnap.data().hastane ? docSnap.data().hastane : ""); // Set hastane if present
       setUnvan(docSnap.data().unvan ? docSnap.data().unvan : ""); // Set unvan if present
+      setUserType(docSnap.data().userType )
+      setEmail(docSnap.data().email)
       data = docSnap.data();
       collectionData = docSnap.data();
       console.log("data is :", data);
@@ -76,6 +84,20 @@ export default function Profile() {
       fetchData();
     }, [])
   );
+
+
+  useEffect(() => {
+    const userDetails = {
+      displayName: displayName,
+      email: email,
+      userType: userType,
+      uzmanlik: uzmanlik,
+    };
+    console.log("userDetails")
+
+  console.log(userDetails)
+    setQrValue(`doctorapp://${encodeURIComponent(JSON.stringify(userDetails))}`);
+  }, [displayName]);
   //-----------------------GÜNCELLEME BUTUNU ----------
   async function handlePress() {
     const user = auth.currentUser;
@@ -269,15 +291,16 @@ export default function Profile() {
           <MapView style={styles.map} region={region}>
             <Marker coordinate={region} title={unvan} />
           </MapView>
-
+          <Text style={styles.modalTitle}>QR Code</Text>
+          {qrValue ? <QRCode value={qrValue} size={100} /> : <Text>Loading...</Text>}
           {/* Güncelle Butonu */}
-          <Button
-            title="Güncelle"
+          <Pressable
+            style={[styles.button, styles.buttonOpen]}
             color={colors.button}
-            style={{ width: 300, marginTop: 20 }}
+           
             onPress={handlePress}
-            disabled={!displayName || !uzmanlik || !hastane || !unvan}
-          />
+            disabled={!displayName || !uzmanlik || !hastane }
+          ><Text style={{color:"white"}}>Güncelle</Text></Pressable>
         </View>
       </ScrollView>
     </React.Fragment>
@@ -323,5 +346,13 @@ const styles = StyleSheet.create({
     height: 200,
     margin: 20,
     borderWidth: 2,
+  },button: {marginTop:4,
+    borderRadius: 20,
+   padding: 10,
+    elevation: 2,   alignItems: 'center',
+
+  },
+  buttonOpen: {
+    backgroundColor: '#000',
   },
 });

@@ -18,7 +18,7 @@ export default function ContactsFloatingIcon() {
         borderRadius: 14,
         width: 60,
         height: 60,
-        backgroundColor: "#1B0AE8",
+        backgroundColor:colors.secondary ,
         alignItems: "center",
         justifyContent: "center",
       }}

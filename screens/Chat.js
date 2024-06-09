@@ -126,6 +126,8 @@ export default function Chat() {
   }
 
   async function sendImage(uri, roomPath) {
+    console.log(uri)
+
     const { url, fileName } = await uploadImage(
       uri,
       `images/rooms/${roomPath || roomHash}`
@@ -137,6 +139,7 @@ export default function Chat() {
       user: senderUser,
       image: url,
     };
+    console.log(message)
     const lastMessage = { ...message, text: "Image" };
     await Promise.all([
       addDoc(roomMessagesRef, message),
@@ -152,7 +155,10 @@ export default function Chat() {
   async function handlePhotoPicker() {
     const result = await pickImage();
     if (!result.cancelled) {
-      await sendImage(result.uri);
+      console.log("result")
+
+      console.log(result)
+      await sendImage(result.assets[0].uri);
     }
   }
 
