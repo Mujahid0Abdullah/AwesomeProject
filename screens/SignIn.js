@@ -54,11 +54,11 @@ async function handlePress(){
       }}
     ><Text style={{ textAlign : "center",color:"white"}}>Doktor girişi </Text></TouchableOpacity>
     */}
+   <Image         style={{ resizeMode:'cover',width:434,height:450, alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} 
 
-   <Image
-        style={{ resizeMode:'contain',width:434,height:400, alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} 
-        source={require("../assets/kayitolsc.png")}
+        source={require("../assets/giris.png")}
       />
+ 
       <View style={styles.view}>
         <View style={{flexDirection:'row' , alignItems:'center',alignSelf:'flex-start'}}>
         
@@ -96,7 +96,7 @@ async function handlePress(){
 
         
         <TouchableOpacity style= {{padding:10, verticalAlign:'bottom'}} onPress={() => mode === "signUp" ? setMode("signIn"): setMode("signUp")}>
-          <Text>
+          <Text style={{color:"blue"}}>
             {mode === "signUp" ? "hesapiniz varsa ,Giriş yapailirsiniz.": "hesapiniz yok ise , Kayıt olun."}
           </Text>
         </TouchableOpacity>
@@ -130,7 +130,7 @@ async function handlePress(){
     },
     view:{
       alignItems: 'center',
-      marginTop: -1 ,backgroundColor: "#34b7f1",
+      marginTop: -1 ,backgroundColor: "#0F7FCB",
       width: "100%",
       borderTopLeftRadius:1,
       borderTopRightRadius:1,

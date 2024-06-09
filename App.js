@@ -1,12 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, Text, View, LogBox, Button } from "react-native";
+import React, { useContext, useEffect, 
+  useState } from "react";
+import { StyleSheet, Text, View, LogBox, Button, Pressable } from "react-native";
 import { app, db } from "./firebase.js";
 import { useAssets } from "expo-asset";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import * as Notifications from "expo-notifications";
+import { useRoute, useFocusEffect } from "@react-navigation/native";
+
 
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import SignIn from "./screens/SignIn.js";
@@ -29,12 +32,9 @@ import BarcodeScannerScreen from "./screens/BarcodeScannerScreen.js";
 import { PermissionsAndroid } from "react-native";
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 const auth = getAuth(app);
-/*
-LogBox.ignoreLogs([
-  "fff",
-  "ddd"
-  
-])*/
+
+LogBox.ignoreAllLogs();//Ignore all log notifications
+
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -104,13 +104,13 @@ function App() {
           <Stack.Screen
             options={{
               headerStyle: {
-                backgroundColor: "#34b7f1",
+                backgroundColor: "#0F7FCB",
                 borderBottomLeftRadius: 19,
                 borderBottomRightRadius: 19,
               },
             }}
             style={{ alignItems: "center" }}
-            name="sign In"
+            name="Giriş "
             component={SignIn}
           />
 
@@ -136,7 +136,7 @@ function App() {
               shadowOpacity: 0,
               elevation: 0,
             },
-            headerTintColor: "#1B0AE8",
+            headerTintColor: "#0F7FCB",
             /* ,headerTitleAlign: 'center' */
           }}
         >
@@ -152,12 +152,12 @@ function App() {
             style={{ backgroundColor: "#445354" }}
             name="home"
             options={({ navigation }) => ({
-              title: "Doktorlarım",
+              title: "Doctors' WAY",
               headerRight: () => (
-                <Button
+                <Pressable style={[styles.button, styles.buttonOpen]}
                   title="Scan QR Code"
                   onPress={() => navigation.navigate('BarcodeScanner')}
-                />
+                ><Text style={{color:"white"}}>Scan QR Code</Text></Pressable>
               ),
               headerStyle: {
                 backgroundColor: "white",
@@ -198,6 +198,9 @@ function App() {
   );
 }
 function Home() {
+  const {
+    theme: { colors },
+  } = useContext(Context);
   const [userType, setUserType] = useState(""); // Burada userType state'i oluşturun
   useEffect(() => {
     // userType bilgisini Firestore'dan çekin ve setUserType ile ayarlayın
@@ -214,13 +217,36 @@ function Home() {
     fetchUserType();
   }, []);
 
+/*
+  useFocusEffect(
+    React.useCallback(() => { 
+       // userType bilgisini Firestore'dan çekin ve setUserType ile ayarlayın
+    async function fetchUserType() {
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserType(data.userType);
+        console.log("usertype in Home Component" + userType);
+        console.log(userType);
+      }
+    }
+    fetchUserType();
+    }, [])
+  );*/
   return (
     <Tab.Navigator
-      
+    screenOptions={{
+      tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
+      tabBarStyle: { backgroundColor:"white" },
+      tabBarActiveTintColor:  colors.primary,
+      tabBarInactiveTintColor: '#000',
+      tabBarIndicatorStyle: { backgroundColor: colors.primary },
+    }}
     >
       <Tab.Screen
         name="PROFILE"
-        component={userType === "doctor" ? Profile : HastaProfile}
+        component={userType === "doctor" ?  Profile : HastaProfile}
       />
       <Tab.Screen name="chats" component={Chats} />
       <Tab.Screen
@@ -241,6 +267,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  }, button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,   alignItems: 'center',
+
+  },
+  buttonOpen: {
+    backgroundColor: '#000',marginRight:7,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
   },
 });
 

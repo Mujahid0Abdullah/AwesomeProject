@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
-  Alert, 
+  Alert, Image
 } from "react-native";
 import { auth, db } from "../firebase.js";
 import {
@@ -23,6 +23,8 @@ export default function DoctorAppointmentsScreen() {
   const route = useRoute();
   const userB = auth.currentUser; // Doctor information
   const [appointments, setAppointments] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
   useFocusEffect(
     React.useCallback(() => {
       const fetchAppointments = async () => {
@@ -76,7 +78,7 @@ export default function DoctorAppointmentsScreen() {
               );
               setAppointments(updatedAppointments);
               console.log("Randevu silindi:", appointmentId);
-              await sendAppointmentDeletionNotification({ appointmentId });  // Pass appointmentId as an argument
+              //await sendAppointmentDeletionNotification({ appointmentId });  // Pass appointmentId as an argument
 
             } catch (error) {
               console.error("Randevu silme hatası:", error);
@@ -120,16 +122,20 @@ export default function DoctorAppointmentsScreen() {
     </View>
   );*/
   const renderAppointment = ({ item }) => (
-    <View style={styles.appointmentItem}>
+    <TouchableOpacity style={styles.appointmentItem} onPress={() => setModalVisible(false)}>
       <View style={styles.appointmentDetails}>
         <Text style={styles.appointmentTextName}>{item.patientdisplayName}</Text>
         <Text style={styles.appointmentTextDate}>{item.date}</Text>
+        <View>
+        <Text >Hastanın Bilgileri:</Text>
+        <Text style={styles.appointmentTextDate}>{item.patientEmail}</Text>
+        </View>
       </View>
       <Text style={styles.appointmentTextTime}>{item.time.split('T')[1].slice(0, 5)}</Text>
       <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteAppointment(item.id)}>
         <Text style={styles.deleteButtonText}>Sil</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
   
   
@@ -145,7 +151,9 @@ export default function DoctorAppointmentsScreen() {
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() => (
-            <Text style={styles.emptyListText}>Henüz randevunuz yok.</Text>
+            <View style={styles.emptyContainer}>
+            <Image  source={require("../assets/emptyapp.png")}  style={{ resizeMode:'contain',width:234,height:200,  alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end' }} />
+            <Text style={styles.emptyListText}>Henüz randevunuz yok.</Text></View>
           )}
         />
       </View>
@@ -175,7 +183,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#fff', // White background for each appointment
-    padding: 18,
+    padding: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -183,6 +191,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     marginBottom: 15,
+    marginLeft:3,marginRight:3
   },
   appointmentDetails: {
     flex: 1, // Allow details to expand as needed
@@ -198,18 +207,22 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   appointmentTextTime: {
+    alignSelf:"baseline",
+
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
   },
   deleteButton: {
+    alignSelf:"flex-end",
     backgroundColor: '#dc3545', // Red delete button
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 5, margin:6
   },
   deleteButtonText: {
     color: '#fff',
     fontSize: 16,
+   
   },
   emptyListText: {
     textAlign: 'center',

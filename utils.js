@@ -13,7 +13,7 @@ export async function askForPermission() {
 }
 
 export async function uploadImage(uri, path, fName) {
-
+  console.log(uri)
   const blob = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -44,9 +44,9 @@ export async function uploadImage(uri, path, fName) {
 
 
 const palette = {
-    tealGreen: "#1B0AE8",
+    tealGreen: "#D1584B",
     tealGreenDark: "#04cbb8",
-    green: "#25d3aa",
+    blue: "#0F7FCB",
     lime: "#92cbdf",
     skyblue: "#34b7f1",
     smokeWhite: "#ece5dd",
@@ -62,7 +62,7 @@ const palette = {
       foreground: palette.tealGreenDark,
       primary: palette.tealGreen,
       tertiary: palette.lime,
-      secondary: palette.green,
+      secondary: palette.blue,
       white: palette.white,
       text: palette.gray,
       button:palette.skyblue,

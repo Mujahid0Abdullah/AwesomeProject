@@ -5,7 +5,7 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Alert,
+  Alert,Image,
   TouchableOpacity,
 } from "react-native";
 import { auth, db } from "../firebase.js";
@@ -123,7 +123,35 @@ const PatientAppointmentsScreen = () => {
       ]
     );
   };
-
+  const renderAppointmentItem = ({ item }) => {
+    const appointmentDate = new Date(item.time).toLocaleDateString("tr-TR", {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const appointmentTime = new Date(item.time).toLocaleTimeString("tr-TR", {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  
+    return (
+      <TouchableOpacity style={styles.appointmentItem}>
+        <Text style={styles.doctorName}>{item.doktordisplayName}</Text>
+        <View style={styles.appointmentDetails}>
+          <Text style={styles.appointmentDateText}>{appointmentDate}</Text>
+          <Text style={styles.appointmentTimeText}>{appointmentTime}</Text>
+        </View>
+        
+        <TouchableOpacity
+          onPress={() => handleDeleteAppointment(item.id)}
+          style={styles.deleteButton}
+        >
+          <Text style={styles.deleteButtonText}>Sil</Text>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };/*
   const renderAppointmentItem = ({ item }) => {
     const date = new Date(item.time).toLocaleDateString("tr-TR");
     const time = new Date(item.time).toLocaleTimeString("tr-TR");
@@ -141,13 +169,18 @@ const PatientAppointmentsScreen = () => {
       </TouchableOpacity>
     );
   };
-
+*/
   return (
     <View style={styles.container}>
       <FlatList
         data={appointments}
         renderItem={renderAppointmentItem}
         keyExtractor={(item) => item.id}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+          <Image  source={require("../assets/emptyapp.png")}  style={{ resizeMode:'contain',width:234,height:200,  alignItems:'flex-end' ,verticalAlign:"end", alignSelf:'center',alignContent:'flex-end', }} />
+          <Text style={styles.emptyListText}>Henüz randevularınız yok.</Text></View>
+        )}
       />
     </View>
   );
@@ -166,36 +199,44 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 10,
-    shadowColor: "black",
+    padding: 15,
+    marginBottom: 10,
     borderRadius: 10,
-    margin: 3,
-    backgroundColor: "#dddddd",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    backgroundColor: "#f5f5f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2, // For some devices without shadowColor support
   },
-  appointmentDate: {
+  appointmentDetails: {
+    marginRight: 10,
+  },
+  appointmentDateText: {
     fontSize: 16,
     fontWeight: "bold",
   },
-  appointmentTime: {
-    fontSize: 16,
+  appointmentTimeText: {
+    fontSize: 14,
+    color: "#999",
   },
-  dotorname: {
+  doctorName: {
     fontSize: 16,
+    flex: 1, // Allow doctor name to expand within available space
+    textAlign: 'left' // Align doctor name to the right
   },
   deleteButton: {
-    padding: 5,
+    padding: 8,
     backgroundColor: "#f14949",
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 10,
   },
   deleteButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },
 });
+
 
 export default PatientAppointmentsScreen;
